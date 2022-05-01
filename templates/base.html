@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    {% block html_head %}{% endblock %}
+  </head>
+<nav>
+  [
+  <a href="/">Home</a>
+  |
+  <a href="/fishermen">All Fishermen</a>
+  |
+  <a href="/add_fisherman">Add Fisherman</a>
+  ]
+<!--  <ul>-->
+<!--    <li class="nav"><a href="/">Home</a></li>-->
+<!--    <li class="nav"><a href="/fishermen">All Fishermen</a></li>-->
+<!--    <li class="nav"><a href="/add_fisherman">Add Fisherman</a></li>-->
+<!--  </ul>-->
+</nav>
+  <body>
+    <div id="content">
+    {% block content %}{% endblock %}
+  </div>
+
+  <div id="footer">
+    {% block footer %}
+    &copy; Copyright 2022 | Lucas Jensen & Jerrod Lepper
+    {% endblock %}
+  </div>
+  </body>
+</html>

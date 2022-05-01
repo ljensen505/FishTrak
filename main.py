@@ -10,10 +10,20 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    """
-    The route for the homepage
-    """
+    """The route for the homepage"""
     return render_template('index.html')
+
+
+@app.route('/fishermen')
+def fishermen():
+    """The route for displaying all fishermen"""
+    return render_template('fishermen.html')
+
+
+@app.route('/add_fisherman')
+def add_fisherman():
+    """add a fisherman to the db"""
+    return render_template('add_fisherman.html')
 
 
 def main():
