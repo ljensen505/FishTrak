@@ -7,6 +7,20 @@
 
 {% block content %}
 
-<!--enter content here-->
+<table>
+  <tr>
+    <th>name</th>
+  </tr>
+  {% for person in people %}
+  <tr>
+<!--    These need to be links to update each fisherman.-->
+<!--    A page exists for these: update_fisherman.html-->
+<!--    The route for this look for a fisherman's name, but I think -->
+<!--    it would be better to use an ID instead since it is guaranteed-->
+<!--    to be unique-->
+    <td>{{ person }}</td>
+  </tr>
+  {% endfor %}
+</table>
 
 {% endblock %}
