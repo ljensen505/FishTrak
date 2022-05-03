@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <p class="lead">No actual update functionality yet. All sample data. You'll be redirected upon submit.</p>
+
+    <form method="post">
+        <table class="table">
+            <tr>
+                <td><label for="name">Name:</label></td>
+                <td><input id="name" name="name" required type="text" value="{{ lure['name'] }}"></td>
+            </tr>
+            <tr>
+                <td><label for="weight">Weight:</label></td>
+                <td><input id="weight" name="weight" required type="number" value="{{ lure['weight'] }}"></td>
+            </tr>
+            <tr>
+                <td><label for="color">Color:</label></td>
+                <td><input id="color" name="color" required type="text" value="{{ lure['color'] }}"></td>
+            </tr>
+            <tr>
+                <td><label for="type">Type:</label></td>
+                <td><input id="type" name="type" required type="text" value="{{ lure['type'] }}"></td>
+            </tr>
+        </table>
+
+        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+    </form>
+</div>
+
+{% endblock %}

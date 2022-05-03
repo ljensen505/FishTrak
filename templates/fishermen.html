@@ -8,24 +8,25 @@
 {% block content %}
 
 <div class="container">
-    <a class="btn btn-outline-secondary btn-lg" href="/add_fisherman">New</a>
-</div>
-
-<div class="container">
 <table class="table table-hover">
 
   {% for person in people %}
 
   <tr>
-    <td>{{ person['id'] }}</td>
-    <td>{{ person['name'].title() }}</td>
-    <td><a class="btn btn-outline-info btn-sm" href="/fishermen/update:{{ person['id'] }}">Edit</a></td>
-    <td><a class="btn btn-outline-danger btn-sm" href="/fishermen/delete:{{ person['id'] }}">Delete</a></td>
+    <td>{{ person }}</td>
+    <td>{{ people[person]['name'].title() }}</td>
+    <td><a class="btn btn-outline-info btn-sm" href="/fishermen/update:{{ person }}">Edit</a></td>
+    <td><a class="btn btn-outline-danger btn-sm" href="/fishermen/delete:{{ person }}">Delete</a></td>
   </tr>
 
   {% endfor %}
 
 </table>
+
+<div class="container">
+    <a class="btn btn-outline-secondary btn-lg" href="/add_fisherman">New</a>
+</div>
+
 </div>
 
 {% endblock %}
