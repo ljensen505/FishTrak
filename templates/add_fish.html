@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <form method="post">
+        <table class="table">
+            <tr>
+                <td><label for="species">Species:</label></td>
+                <td>
+                    <select required name="species" id="species">
+                        <option disabled selected value=></option>
+
+                        {% for fish in species %}
+
+                            <option value=>{{ species[fish]['name'] }}</option>
+
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="location">Location:</label></td>
+                <td>
+                    <select required name="location" id="location">
+                        <option disabled selected value=></option>
+
+                        {% for body in bodies %}
+
+                            <option value=>{{ bodies[body]['name'] }}</option>
+
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="lure">Lure:</label></td>
+                <td>
+                    <select name="lure" id="lure">
+                        <option disabled selected value=></option>
+
+                        {% for lure in lures %}
+
+                            <option value=>{{ lures[lure]['name'] }}</option>
+
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="fisherman">Caught By:</label></td>
+                <td>
+                    <select name="fisherman" id="fisherman">
+                        <option disabled selected value=></option>
+
+                        {% for fisherman in fishermen %}
+
+                            <option value=>{{ fishermen[fisherman]['name'] }}</option>
+
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="weight">Weight:</label></td>
+                <td><input name="weight" id="weight" type="number"></td>
+            </tr>
+        </table>
+
+        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+    </form>
+</div>
+
+{% endblock %}

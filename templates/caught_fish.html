@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<table class="table table-hover">
+
+<tr>
+    <th>ID</th>
+    <th>Species</th>
+    <th>Location</th>
+    <th>Lure</th>
+    <th>Caught By</th>
+    <th>Weight</th>
+    <th></th>
+    <th></th>
+</tr>
+
+  {% for fish in fishes %}
+
+  <tr>
+    <td>{{ fish }}</td>
+    <td>{{ species[str(fishes[fish]['species_id'])]['name'].title() }}</td>
+    <td>{{ bodies[str(fishes[fish]['body_of_water_id'])]['name'].title() }}</td>
+
+    {% if fishes[fish]['lure_id'] == None %}
+        <td></td>
+    {% else %}
+        <td>{{ lures[str(fishes[fish]['lure_id'])]['name'] }}</td>
+    {% endif %}
+
+    <td>{{ fishermen[str(fishes[fish]['fisherman_id'])]['name'] }}</td>
+
+    {% if fishes[fish]['weight'] == None %}
+        <td></td>
+    {% else %}
+        <td>{{ fishes[fish]['weight'] }}</td>
+    {% endif %}
+
+    <td><a class="btn btn-outline-info btn-sm" href="/water_bodies/update:{{ body }}">Edit</a></td>
+    <td><a class="btn btn-outline-danger btn-sm" href="/water_bodies/delete:{{ body }}">Delete</a></td>
+  </tr>
+
+  {% endfor %}
+
+</table>
+
+<div class="container">
+    <a class="btn btn-outline-secondary btn-lg" href="/caught_fish/add">New</a>
+</div>
+
+</div>
+
+{% endblock %}

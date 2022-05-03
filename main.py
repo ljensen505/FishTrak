@@ -4,18 +4,8 @@ Lucas Jensen
 Jerrod Lepper
 """
 from flask import Flask, render_template, request, redirect
-
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 
-LUCAS = {
-    'id': 1,
-    'name': 'Lucas',
-}
-JERROD = {
-    'id': 2,
-    'name': 'Jerrod'
-}
-PEOPLE = [LUCAS, JERROD]
 
 app = Flask(__name__)
 
@@ -200,6 +190,26 @@ def add_species():
         print(f"You added {request.form['name']} to the db! (not really)")
         return redirect('/species')
     return render_template('add_species.html', title='Add Species')
+
+
+# CAUGHT_FISH
+@app.route('/caught_fish')
+def caught_fish():
+    """The route for displaying all caught fish"""
+    print(SPECIES[str(CAUGHT_FISH['1']['species_id'])]['name'])
+    # print(SPECIES[CAUGHT_FISH['1']['species_id']])
+    return render_template('caught_fish.html', title='Caught Fish', fishes=CAUGHT_FISH, species=SPECIES,
+                           bodies=BODIES_OF_WATER, lures=LURES, fishermen=FISHERMEN, str=str)
+
+
+@app.route('/caught_fish/add', methods=['GET', 'POST'])
+def add_fish():
+    """adds a caught fish to the db"""
+    if request.method == 'POST':
+        print(f"You added a fish to the db! (not really)")
+        return redirect('/caught_fish')
+    return render_template('add_fish.html', title='Add Fish', species=SPECIES, bodies=BODIES_OF_WATER, lures=LURES,
+                           fishermen=FISHERMEN)
 
 
 def main():

@@ -78,56 +78,56 @@ BODIES_OF_WATER = {
 
 CAUGHT_FISH = {
     '1': {
-        'species_id:': 1,
+        'species_id': 1,
         'body_of_water_id': 1,
         'lure_id': None,
         'fisherman_id': 1,
         'weight': 5
     },
     '2': {
-        'species_id:': 1,
+        'species_id': 1,
         'body_of_water_id': 1,
         'lure_id': 2,
         'fisherman_id': 1,
         'weight': 4
     },
     '3': {
-        'species_id:': 1,
+        'species_id': 1,
         'body_of_water_id': 1,
         'lure_id': 3,
         'fisherman_id': 1,
         'weight': None
     },
     '4': {
-        'species_id:': 2,
+        'species_id': 2,
         'body_of_water_id': 1,
         'lure_id': None,
         'fisherman_id': 1,
         'weight': 1
     },
     '5': {
-        'species_id:': 3,
+        'species_id': 3,
         'body_of_water_id': 2,
         'lure_id': 1,
         'fisherman_id': 1,
         'weight': 20
     },
     '6': {
-        'species_id:': 3,
+        'species_id': 3,
         'body_of_water_id': 2,
         'lure_id': 2,
         'fisherman_id': 2,
         'weight': 12
     },
     '7': {
-        'species_id:': 3,
+        'species_id': 3,
         'body_of_water_id': 2,
         'lure_id': 1,
         'fisherman_id': 2,
         'weight': None
     },
     '8': {
-        'species_id:': 3,
+        'species_id': 3,
         'body_of_water_id': 3,
         'lure_id': 1,
         'fisherman_id': 3,
