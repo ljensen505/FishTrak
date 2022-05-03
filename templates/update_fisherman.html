@@ -7,9 +7,12 @@
 
 {% block content %}
 
+<p class="lead">No actual update functionality yet. All sample data. You'll be redirected upon submit.</p>
+
 <form method="post">
   <label for="name">Name: </label>
-  <input id="name" name="name" required type="text", placeholder="name">
+  <input id="name" name="name" required type="text", value="{{ person['name'] }}">
+    <button type="submit" class="btn btn-primary btn-sm">Update</button>
 </form>
 
 {% endblock %}

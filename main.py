@@ -3,7 +3,17 @@ The main UI file for FishTrak o'Matic
 Lucas Jensen
 Jerrod Lepper
 """
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
+
+LUCAS = {
+    'id': 1,
+    'name': 'Lucas',
+}
+JERROD = {
+    'id': 2,
+    'name': 'Jerrod'
+}
+PEOPLE = [LUCAS, JERROD]
 
 app = Flask(__name__)
 
@@ -14,10 +24,10 @@ def home():
     return render_template('index.html', title='Homepage')
 
 
-@app.route('/fishermen')
+@app.route('/fishermen', methods=['GET', 'POST'])
 def fishermen():
     """The route for displaying all fishermen"""
-    people = ['Fake Jerrod', 'Fake Lucas']
+    people = [LUCAS, JERROD]
     return render_template('fishermen.html', title='All Fishermen', people=people)
 
 
@@ -29,11 +39,42 @@ def add_fisherman():
     return render_template('add_fisherman.html', title='Add Fisherman')
 
 
-@app.route('/fishermen/<name>', methods=['GET', 'POST'])
-def update_fisherman(name):
-    """updates a specified fisherman"""
-    return render_template('update_fisherman.html', title='Update Fisherman', name=name)
+@app.route('/fishermen/update:<_id>', methods=['GET', 'POST'])
+def update_fisherman(_id):
+    """
+    updates a specified fisherman.
+    This is a template and does not update anything.
+    """
+    people = [LUCAS, JERROD]
+    target = None
+    for person in people:
+        if str(person['id']) == _id:
+            target = person
+            break
 
+    if request.method == 'POST':
+        return redirect('/fishermen')
+
+    return render_template('update_fisherman.html', title='Update Fisherman', person=target)
+
+
+@app.route('/fishermen/delete:<_id>', methods=['GET', 'POST'])
+def delete_fisherman(_id):
+    """
+    deletes a specified fisherman.
+    This is a template and does not delete anything.
+    """
+    people = [LUCAS, JERROD]
+    target = None
+    for person in people:
+        if str(person['id']) == _id:
+            target = person
+            break
+
+    if request.method == 'POST':
+        return redirect('/fishermen')
+
+    return render_template('delete_fisherman.html', title='Delete Fisherman', person=target)
 
 
 def main():

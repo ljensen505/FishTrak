@@ -7,20 +7,19 @@
 
 {% block content %}
 
-<table>
-  <tr>
-    <th>name</th>
-  </tr>
+<table class="table table-hover">
+
   {% for person in people %}
+
   <tr>
-<!--    These need to be links to update each fisherman.-->
-<!--    A page exists for these: update_fisherman.html-->
-<!--    The route for this look for a fisherman's name, but I think -->
-<!--    it would be better to use an ID instead since it is guaranteed-->
-<!--    to be unique-->
-    <td>{{ person }}</td>
+    <td>{{ person['id'] }}</td>
+    <td>{{ person['name'].title() }}</td>
+    <td><a class="btn btn-outline-info btn-sm" href="/fishermen/update:{{ person['id'] }}">Edit</a></td>
+    <td><a class="btn btn-outline-danger btn-sm" href="/fishermen/delete:{{ person['id'] }}">Delete</a></td>
   </tr>
+
   {% endfor %}
+
 </table>
 
 {% endblock %}
