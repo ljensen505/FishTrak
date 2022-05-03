@@ -5,7 +5,7 @@ Jerrod Lepper
 """
 from flask import Flask, render_template, request, redirect
 
-from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES
+from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 
 LUCAS = {
     'id': 1,
@@ -156,6 +156,50 @@ def add_body():
         print(f"You added {request.form['name']} to the db! (not really)")
         return redirect('/water_bodies')
     return render_template('add_body.html', title='Add Body of Water')
+
+
+# SPECIES
+@app.route('/species', methods=['GET', 'POST'])
+def species():
+    """The route for displaying all fish species"""
+    return render_template('species.html', title='Species', species=SPECIES)
+
+
+@app.route('/species/update:<_id>', methods=['GET', 'POST'])
+def update_species(_id):
+    """
+    updates a specified fish species
+    This is a template and does not update anything
+    """
+    fish = SPECIES[_id]
+
+    if request.method == 'POST':
+        return redirect('/species')
+
+    return render_template('update_species.html', title='Update Species', fish=fish)
+
+
+@app.route('/species/delete:<_id>', methods=['GET', 'POST'])
+def delete_species(_id):
+    """
+    Deletes a specified fish species
+    This is a template and does not delete anything yet
+    """
+    fish = SPECIES[_id]
+
+    if request.method == 'POST':
+        return redirect('/species')
+
+    return render_template('delete_species.html', title='Delete Species', fish=fish)
+
+
+@app.route('/species/add', methods=['GET', 'POST'])
+def add_species():
+    """add a species to the db"""
+    if request.method == 'POST':
+        print(f"You added {request.form['name']} to the db! (not really)")
+        return redirect('/species')
+    return render_template('add_species.html', title='Add Species')
 
 
 def main():

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <p class="lead">No actual update functionality yet. All sample data. You'll be redirected upon submit.</p>
+
+    <form method="post">
+        <table class="table">
+            <tr>
+                <td><label for="name">Name:</label></td>
+                <td><input id="name" name="name" required type="text" value="{{ fish['name'] }}"></td>
+            </tr>
+            <tr>
+                <td><label for="is_freshwater">Freshwater:</label></td>
+                <td><input name="is_freshwater" id="is_freshwater" type="checkbox"></td>
+            </tr>
+            <tr>
+                <td><label for="avg_weight">Avg Weight</label></td>
+                <td><input name="avg_weight" id="avg_weight" type="number" value="{{ fish['avg_weight'] }}"></td>
+            </tr>
+            <tr>
+                <td><label for="description">Description</label></td>
+                <td><input id="description" name="description" type="text" value="{{ fish['description'] }}"></td>
+            </tr>
+        </table>
+
+        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+    </form>
+</div>
+
+{% endblock %}
