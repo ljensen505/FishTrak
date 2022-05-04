@@ -212,6 +212,21 @@ def add_fish():
                            fishermen=FISHERMEN)
 
 
+@app.route('/caught_fish/update:<_id>', methods=['GET', 'POST'])
+def update_fish(_id):
+    """
+    updates a specified caught fish
+    This is a template and does not update anything
+    """
+    fish = CAUGHT_FISH[_id]
+
+    if request.method == 'POST':
+        return redirect('/caught_fish')
+
+    return render_template('/update_fish.html', title='Update Fish', species=SPECIES, bodies=BODIES_OF_WATER,
+                           lures=LURES, fishermen=FISHERMEN, curr_fish=fish, str=str)
+
+
 def main():
     """
     the main function for running the UI

@@ -42,8 +42,8 @@
         <td>{{ fishes[fish]['weight'] }}</td>
     {% endif %}
 
-    <td><a class="btn btn-outline-info btn-sm" href="/water_bodies/update:{{ body }}">Edit</a></td>
-    <td><a class="btn btn-outline-danger btn-sm" href="/water_bodies/delete:{{ body }}">Delete</a></td>
+    <td><a class="btn btn-outline-info btn-sm" href="/caught_fish/update:{{ fish }}">Edit</a></td>
+    <td><a class="btn btn-outline-danger btn-sm" href="/caught_fish/delete:{{ fish }}">Delete</a></td>
   </tr>
 
   {% endfor %}

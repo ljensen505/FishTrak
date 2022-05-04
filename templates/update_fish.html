@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <p class="lead">No actual update functionality yet. All sample data. You'll be redirected upon submit.</p>
+
+    <form method="post">
+        <table class="table">
+            <tr>
+                <td><label for="species">Species:</label></td>
+                <td>
+                    <select required name="species" id="species">
+                        {% for fish in species %}
+                            {% if species[fish]['name'] == species[str(curr_fish['species_id'])]['name'] %}
+                                <option selected value="{{ species[fish]['name'] }}">{{ species[fish]['name'] }}</option>
+                            {% else %}
+                                <option value="{{ species[fish]['name'] }}">{{ species[fish]['name'] }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="location">Location:</label></td>
+                <td>
+                    <select required name="location" id="location">
+                        {% for body in bodies %}
+                            {% if bodies[body]['name'] == bodies[str(curr_fish['body_of_water_id'])]['name'] %}
+                                <option selected name="{{ bodies[body]['name'] }}" value="{{ bodies[body]['name'] }}">{{ bodies[body]['name'] }}</option>
+                            {% else %}
+                                <option name="{{ bodies[body]['name'] }}" value="{{ bodies[body]['name'] }}">{{ bodies[body]['name'] }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="lure">Lure:</label></td>
+                <td>
+                    <select name="lure" id="lure">
+                        <option selected value=></option>
+                        {% for lure in lures %}
+
+                            <option value=>{{ lures[lure]['name'] }}</option>
+
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="fisherman">Caught By:</label></td>
+                <td>
+                    <select name="fisherman" id="fisherman">
+                        <option selected value=></option>
+
+                        {% for fisherman in fishermen %}
+
+                            <option value=>{{ fishermen[fisherman]['name'] }}</option>
+
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="weight">Weight:</label></td>
+                <td><input name="weight" id="weight" type="number" value="{{ curr_fish['weight'] }}"></td>
+            </tr>
+        </table>
+        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+    </form>
+</div>
+
+{% endblock %}
