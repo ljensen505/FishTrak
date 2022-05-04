@@ -218,6 +218,7 @@ def update_fish(_id):
     updates a specified caught fish
     This is a template and does not update anything
     """
+    # TODO: this html file for this route needs some additional logic to handle default values for lure and caught_by
     fish = CAUGHT_FISH[_id]
 
     if request.method == 'POST':
