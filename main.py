@@ -228,6 +228,20 @@ def update_fish(_id):
                            lures=LURES, fishermen=FISHERMEN, curr_fish=fish, str=str)
 
 
+@app.route('/caught_fish/delete:<_id>', methods=['GET', 'POST'])
+def delete_fish(_id):
+    """
+    Deletes a specified caught_fish
+    This is a template and does not delete anything yet
+    """
+    fish = CAUGHT_FISH[_id]
+
+    if request.method == 'POST':
+        return redirect('/caught_fish')
+
+    return render_template('delete_fish.html', title='Delete Fish', fish=fish, species=SPECIES, str=str)
+
+
 def main():
     """
     the main function for running the UI
