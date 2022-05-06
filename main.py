@@ -3,9 +3,18 @@ The main UI file for FishTrak o'Matic
 Lucas Jensen
 Jerrod Lepper
 """
+import mysql.connector
+
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
+from credentials import HOST, USERNAME, PASSWORD, DB
 
+mydb = mysql.connector.connect(
+    host=HOST,
+    user=USERNAME,
+    password=PASSWORD,
+    database=DB
+)
 
 app = Flask(__name__)
 
@@ -242,12 +251,12 @@ def delete_fish(_id):
     return render_template('delete_fish.html', title='Delete Fish', fish=fish, species=SPECIES, str=str)
 
 
-def main():
-    """
-    the main function for running the UI
-    """
+if __name__ == "__main__":
+    # print("======")
+    # cursor = mydb.cursor()
+    # cursor.execute("SELECT * FROM Fisherman")
+    # result = cursor.fetchall()
+    # for x in result:
+    #     print(x)
+    # print("======")
     app.run(debug=True)
-
-
-if __name__ == '__main__':
-    main()
