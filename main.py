@@ -3,20 +3,22 @@ The main UI file for FishTrak o'Matic
 Lucas Jensen
 Jerrod Lepper
 """
-import mysql.connector
-
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
+from flask_mysqldb import MySQL
 from credentials import HOST, USERNAME, PASSWORD, DB
 
-mydb = mysql.connector.connect(
-    host=HOST,
-    user=USERNAME,
-    password=PASSWORD,
-    database=DB
-)
 
 app = Flask(__name__)
+
+# database connection info
+app.config["MYSQL_HOST"] = HOST
+app.config["MYSQL_USER"] = USERNAME
+app.config["MYSQL_PASSWORD"] = PASSWORD
+app.config["MYSQL_DB"] = DB
+app.config["MYSQL_CURSORCLASS"] = "DictCursor"
+
+mysql = MySQL(app)
 
 
 @app.route('/')
@@ -29,15 +31,32 @@ def home():
 @app.route('/fishermen', methods=['GET', 'POST'])
 def fishermen():
     """The route for displaying all fishermen"""
-    return render_template('fishermen.html', title='Fishermen', people=FISHERMEN)
+    if request.method == "GET":
+        query = "SELECT fisherman_id, name FROM Fisherman"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        people = cur.fetchall()
+
+        return render_template('fishermen.html', title='Fishermen', people=people)
 
 
 @app.route('/fishermen/add', methods=['GET', 'POST'])
 def add_fisherman():
     """add a fisherman to the db"""
     if request.method == 'POST':
-        print(f"You added {request.form['name']} to the db! (not really)")
+
+        # THIS DOES NOT WORK
+
+        new_name = request.form.get('name')
+        # SQL query to add fisherman
+        print(new_name)
+        query = f"INSERT INTO Fisherman (name) VALUES ({new_name})"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        mysql.connection.commit()
+
         return redirect('/fishermen')
+
     return render_template('add_fisherman.html', title='Add Fisherman')
 
 

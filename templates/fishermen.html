@@ -8,15 +8,15 @@
 {% block content %}
 
 <div class="container">
+<p>From the db!</p>
 <table class="table table-hover">
 
   {% for person in people %}
 
   <tr>
-    <td>{{ person }}</td>
-    <td>{{ people[person]['name'].title() }}</td>
-    <td><a class="btn btn-outline-info btn-sm" href="/fishermen/update:{{ person }}">Edit</a></td>
-    <td><a class="btn btn-outline-danger btn-sm" href="/fishermen/delete:{{ person }}">Delete</a></td>
+    <td>{{ person['name'] }}</td>
+    <td><a class="btn btn-outline-info btn-sm" href="/fishermen/update:{{ person['fisherman_id'] }}">Edit</a></td>
+    <td><a class="btn btn-outline-danger btn-sm" href="/fishermen/delete:{{ person['fisherman_id'] }}">Delete</a></td>
   </tr>
 
   {% endfor %}
