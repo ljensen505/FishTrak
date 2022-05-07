@@ -6,7 +6,7 @@ Jerrod Lepper
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
-from credentials import HOST, USERNAME, PASSWORD, DB
+# from credentials import HOST, USERNAME, PASSWORD, DB
 
 
 app = Flask(__name__)
