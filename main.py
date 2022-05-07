@@ -7,13 +7,18 @@ import os
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
-from credentials import HOST, USERNAME, PASSWORD, DB
+from dotenv import load_dotenv
 
 
-# HOST = os.environ["HOST"]
-# USERNAME = os.environ["USERNAME"]
-# PASSWORD = os.environ["PASSWORD"]
-# DB = os.environ['DB']
+load_dotenv()
+
+HOST = os.getenv("HOST")
+USERNAME = os.getenv("U_NAME")
+PASSWORD = os.getenv("PASSWORD")
+DB = os.getenv("DB")
+print(USERNAME)
+print(PASSWORD)
+print(DB)
 
 app = Flask(__name__)
 
