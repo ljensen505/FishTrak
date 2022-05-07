@@ -11,12 +11,12 @@ from boto.s3.connection import S3Connection
 # from credentials import HOST, USERNAME, PASSWORD, DB
 
 
-app = Flask(__name__)
+HOST = os.getenv("HOST")
+USERNAME = os.getenv("USERNAME")
+PASSWORD = os.getenv("PASSWORD")
+DB = os.getenv("DB")
 
-HOST = S3Connection(os.environ['HOST_KEY'], os.environ['HOST_VALUE'])
-USERNAME = S3Connection(os.environ['USERNAME_KEY'], os.environ['USERNAME_VALUE'])
-PASSWORD = S3Connection(os.environ['PASSWORD_KEY'], os.environ['PASSWORD_VALUE'])
-DB = S3Connection(os.environ['DB_KEY'], os.environ['DB_VALUE'])
+app = Flask(__name__)
 
 # database connection info
 app.config["MYSQL_HOST"] = HOST
