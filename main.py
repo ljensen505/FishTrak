@@ -50,9 +50,9 @@ def add_fisherman():
         new_name = request.form.get('name')
         # SQL query to add fisherman
         print(new_name)
-        query = f"INSERT INTO Fisherman (name) VALUES ({new_name})"
+        query = f"INSERT INTO Fisherman (name) VALUES (%s)"
         cur = mysql.connection.cursor()
-        cur.execute(query)
+        cur.execute(query, (new_name,))
         mysql.connection.commit()
 
         return redirect('/fishermen')
