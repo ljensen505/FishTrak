@@ -99,7 +99,11 @@ def delete_fisherman(_id):
     query = f"SELECT name FROM Fisherman WHERE fisherman_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
-    person = cur.fetchall()[0]
+    # If the angler no longer exists, redirect (probably a better way to refresh the anglers than this)
+    try:
+        person = cur.fetchall()[0]
+    except:
+        return redirect('/fishermen')
     name = person['name']
 
     # query to delete fisherman
@@ -108,11 +112,10 @@ def delete_fisherman(_id):
     cur.execute(query, (_id,))
     mysql.connection.commit()
 
-    if request.method == 'POST':
-        return redirect('/fishermen')
-
+    # TODO: implement redirect try and except block to avoid void tuple error
+    """if request.method == 'POST':
+        return redirect('/fishermen')"""
     return render_template('delete_fisherman.html', title='Delete Fisherman', name=name)
-
 
 # LURES
 @app.route('/lures', methods=['GET', 'POST'])
