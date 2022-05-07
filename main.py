@@ -3,13 +3,20 @@ The main UI file for FishTrak o'Matic
 Lucas Jensen
 Jerrod Lepper
 """
+import os
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
+from boto.s3.connection import S3Connection
 # from credentials import HOST, USERNAME, PASSWORD, DB
 
 
 app = Flask(__name__)
+
+HOST = S3Connection(os.environ['HOST'])
+USERNAME = S3Connection(os.environ['USERNAME'])
+PASSWORD = S3Connection(os.environ['PASSWORD'])
+DB = S3Connection(os.environ['DB'])
 
 # database connection info
 app.config["MYSQL_HOST"] = HOST
