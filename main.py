@@ -7,10 +7,7 @@ import os
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
-# from dotenv import load_dotenv
-#
-#
-# load_dotenv()
+
 
 HOST = os.getenv("HOST")
 USERNAME = os.getenv("U_NAME")
