@@ -107,7 +107,7 @@ def delete_fisherman(_id):
     # If the angler no longer exists, redirect (probably a better way to refresh the anglers than this)
     try:
         person = cur.fetchall()[0]
-    except:
+    except IndexError:
         return redirect('/fishermen')
     name = person['name']
 
@@ -141,35 +141,23 @@ def lures():
 def update_lure(_id):
     """
     updates a specified lure
-    This is a template and does not update anything
     """
-
-    """query = f"SELECT fisherman_id, name FROM Fisherman WHERE fisherman_id={_id}"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    person = cur.fetchall()[0]
-
-    if request.method == 'POST':
-        new_name = request.form.get('name')
-
-        # update query
-        query = f"UPDATE Fisherman SET Fisherman.name = %s WHERE fisherman_id={_id}"
-        cur = mysql.connection.cursor()
-        cur.execute(query, (new_name,))
-        mysql.connection.commit()
-
-        # redirect to all fishermen
-        return redirect('/fishermen')
-
-    return render_template('update_fisherman.html', title='Update Fisherman', person=person)"""
-    print(_id)
-    query = f"SELECT lure_id FROM Lures WHERE lure_id={_id}"
-    print(query)
+    query = f"SELECT lure_id FROM Lure WHERE lure_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
     lure = cur.fetchall()
-    print(lure)
+
     if request.method == 'POST':
+        new_lure = request.form.get('name')
+        weight = request.form.get('weight')
+        color = request.form.get('color')
+        type = request.form.get('type')
+
+        # update that lure
+        query = f"UPDATE Lure SET Lure.name = %s, Lure.weight = %s, Lure.color = %s, Lure.type = %s WHERE lure_id={_id}"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (new_lure,weight,color,type))
+        mysql.connection.commit()
         return redirect('/lures')
 
     return render_template('update_lure.html', title='Update Lure', lure=lure)
@@ -179,15 +167,21 @@ def update_lure(_id):
 def delete_lure(_id):
     """
     Deletes a specified lure
-    This is a template and does not delete anything yet
     """
-    lure = LURES[_id]
-
-    if request.method == 'POST':
+    query = f"SELECT name FROM Lure WHERE lure_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    try:
+        lure = cur.fetchall()
+    except IndexError:
         return redirect('/lures')
 
-    return render_template('delete_lure.html', title='Delete Lure', lure=lure)
+    query = "DELETE FROM Lure WHERE lure_id = %s"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (_id,))
+    mysql.connection.commit()
 
+    return render_template('delete_lure.html', title='Delete Lure', lure=lure)
 
 @app.route('/lures/add', methods=['GET', 'POST'])
 def add_lure():

@@ -30,7 +30,7 @@
       <td>{{ lure['color'] }}</td>
       <td>{{ lure['type'] }}</td>
     <td><a class="btn btn-outline-info btn-sm" href="/lures/update:{{ lure['lure_id'] }}">Edit</a></td>
-    <td><a class="btn btn-outline-danger btn-sm" href="/lures/delete:{{ lure }}">Delete</a></td>
+    <td><a class="btn btn-outline-danger btn-sm" href="/lures/delete:{{ lure['lure_id'] }}">Delete</a></td>
   </tr>
 
   {% endfor %}
