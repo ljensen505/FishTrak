@@ -7,10 +7,10 @@ import os
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
-from dotenv import load_dotenv
-
-
-load_dotenv()
+# from dotenv import load_dotenv
+#
+#
+# load_dotenv()
 
 HOST = os.getenv("HOST")
 USERNAME = os.getenv("U_NAME")
@@ -300,11 +300,4 @@ def delete_fish(_id):
 
 
 if __name__ == "__main__":
-    # print("======")
-    # cursor = mydb.cursor()
-    # cursor.execute("SELECT * FROM Fisherman")
-    # result = cursor.fetchall()
-    # for x in result:
-    #     print(x)
-    # print("======")
     app.run(debug=True)
