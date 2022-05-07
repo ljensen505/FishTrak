@@ -9,7 +9,7 @@
 
 <div class="container">
 
-    <p class="lead">No actual update functionality yet. All sample data. You'll be redirected upon submit.</p>
+    <p>{{ body }}</p>
 
     <form method="post">
         <table class="table">
@@ -19,19 +19,27 @@
             </tr>
             <tr>
                 <td><label for="is_freshwater">Freshwater:</label></td>
-                <td><input name="is_freshwater" id="is_freshwater" type="checkbox"></td>
+                {% if body['is_freshwater'] == 1 %}
+                    <td><input name="is_freshwater" id="is_freshwater" type="checkbox" checked></td>
+                {% else %}
+                    <td><input name="is_freshwater" id="is_freshwater" type="checkbox"></td>
+                {% endif %}
             </tr>
             <tr>
                 <td><label for="is_stocked">Stocked:</label></td>
-                <td><input name="is_stocked" id="is_stocked" type="checkbox"></td>
+                {% if body['is_stocked'] == 1 %}
+                    <td><input name="is_stocked" id="is_stocked" type="checkbox" checked></td>
+                {% else %}
+                    <td><input name="is_stocked" id="is_stocked" type="checkbox"></td>
+                {% endif %}
             </tr>
             <tr>
                 <td><label for="latitude">Latitude</label></td>
-                <td><input id="latitude" name="latitude" type="number" value="{{ body['latitude'] }}"></td>
+                <td><input id="latitude" name="latitude" type="number" step="any" value="{{ body['latitude'] }}"></td>
             </tr>
             <tr>
                 <td><label for="longitude">Longitude</label></td>
-                <td><input id="longitude" name="longitude" type="number" value="{{ body['longitude'] }}"></td>
+                <td><input id="longitude" name="longitude" type="number" step="any" value="{{ body['longitude'] }}"></td>
             </tr>
         </table>
 

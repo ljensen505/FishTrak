@@ -26,17 +26,17 @@ CREATE TABLE IF NOT EXISTS Caught_fish (
   specific_weight INT,
   PRIMARY KEY (caught_fish_id),
   FOREIGN KEY (species_id)
-  REFERENCES Species (species_id)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION,
+    REFERENCES Species (species_id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
   FOREIGN KEY (lure_id)
-  REFERENCES Lure (lure_id)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION,
+    REFERENCES Lure (lure_id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
   FOREIGN KEY (fisherman_id)
-  REFERENCES Fisherman (fisherman_id)
-  ON DELETE CASCADE
-  ON UPDATE NO ACTION)
+    REFERENCES Fisherman (fisherman_id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -82,8 +82,14 @@ CREATE TABLE IF NOT EXISTS Body_of_water (
 CREATE TABLE IF NOT EXISTS Species_has_body_of_water (
     species_id INT,
     body_of_water_id INT,
-    FOREIGN KEY (species_id) REFERENCES Species (species_id),
-    FOREIGN KEY (body_of_water_id) REFERENCES Body_of_water (body_id)
+    FOREIGN KEY (species_id)
+        REFERENCES Species (species_id)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION,
+    FOREIGN KEY (body_of_water_id)
+        REFERENCES Body_of_water (body_id)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION
 )ENGINE = InnoDB;
 
 -- -----------------------------------------------------

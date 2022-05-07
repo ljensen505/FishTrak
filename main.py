@@ -98,7 +98,6 @@ def update_fisherman(_id):
 def delete_fisherman(_id):
     """
     deletes a specified fisherman.
-    This is a template and does not delete anything.
     """
     # query for fisherman using ID
     query = f"SELECT name FROM Fisherman WHERE fisherman_id={_id}"
@@ -207,18 +206,46 @@ def add_lure():
 @app.route('/water_bodies', methods=['GET', 'POST'])
 def water_bodies():
     """The route for displaying all lures"""
-    return render_template('water_bodies.html', title='Bodies of Water', bodies = BODIES_OF_WATER)
+    query = "SELECT * FROM Body_of_water"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    bodies = cur.fetchall()
+
+    return render_template('water_bodies.html', title='Bodies of Water', bodies=bodies, bool=bool)
 
 
 @app.route('/water_bodies/update:<_id>', methods=['GET', 'POST'])
 def update_body(_id):
     """
     updates a specified body of water
-    This is a template and does not update anything
     """
-    body = BODIES_OF_WATER[_id]
+    # query for body of water using ID
+    query = f"SELECT * FROM Body_of_water WHERE body_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    body = cur.fetchall()[0]
 
     if request.method == 'POST':
+        name = request.form.get('name')
+        if request.form.get('is_freshwater') == 'on':
+            is_freshwater = 1
+        else:
+            is_freshwater = 0
+        if request.form.get('is_stocked') == 'on':
+            is_stocked = 1
+        else:
+            is_stocked = 0
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
+
+        # update query
+        # query = f"UPDATE Lure SET Lure.name = %s, Lure.weight = %s, Lure.color = %s, Lure.type = %s WHERE lure_id={_id}"
+        query = f"UPDATE Body_of_water SET Body_of_water.name = %s, Body_of_water.is_freshwater = %s, Body_of_water.is_stocked = %s, Body_of_water.latitude = %s, Body_of_water.longitude = %s WHERE body_id = {_id};"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (name, is_freshwater, is_stocked, latitude, longitude))
+        mysql.connection.commit()
+
+        # redirect to all water bodies
         return redirect('/water_bodies')
 
     return render_template('update_body.html', title='Update Body', body=body)
@@ -228,12 +255,25 @@ def update_body(_id):
 def delete_body(_id):
     """
     Deletes a specified body of water
-    This is a template and does not delete anything yet
     """
-    body = BODIES_OF_WATER[_id]
+    # query for original body of water attributes
+    query = f"SELECT * FROM Body_of_water WHERE body_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
 
-    if request.method == 'POST':
+    # if the body of water no longer exists, redirect
+    try:
+        body = cur.fetchall()[0]
+    except IndexError:
         return redirect('/water_bodies')
+
+    name = body['name']
+
+    # query to delete body of water
+    query = "DELETE FROM Body_of_water WHERE body_id = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (_id,))
+    mysql.connection.commit()
 
     return render_template('delete_body.html', title='Delete Body', body=body)
 
@@ -242,7 +282,26 @@ def delete_body(_id):
 def add_body():
     """add a body of water to the db"""
     if request.method == 'POST':
-        print(f"You added {request.form['name']} to the db! (not really)")
+        # gather data from the form
+        name = request.form.get('name')
+        if 'is_freshwater' in request.form:
+            is_freshwater = 1
+        else:
+            is_freshwater = 0
+        if 'is_stocked' in request.form:
+            is_stocked = 1
+        else:
+            is_stocked = 0
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
+
+        # query to get insert new body of water
+        query = f"INSERT INTO Body_of_water (name, is_freshwater, is_stocked, latitude, longitude) " \
+                f"VALUES (%s, %s, %s, %s, %s)"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (name, is_freshwater, is_stocked, latitude, longitude))
+        mysql.connection.commit()
+
         return redirect('/water_bodies')
     return render_template('add_body.html', title='Add Body of Water')
 

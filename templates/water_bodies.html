@@ -23,13 +23,13 @@
   {% for body in bodies %}
 
   <tr>
-    <td>{{ body }}</td>
-    <td>{{ bodies[body]['name'].title() }}</td>
-    <td>{{ bodies[body]['is_freshwater'] }}</td>
-      <td>{{ bodies[body]['is_stocked'] }}</td>
-      <td>{{ bodies[body]['latitude'] }}, {{ bodies[body]['longitude'] }}</td>
-    <td><a class="btn btn-outline-info btn-sm" href="/water_bodies/update:{{ body }}">Edit</a></td>
-    <td><a class="btn btn-outline-danger btn-sm" href="/water_bodies/delete:{{ body }}">Delete</a></td>
+    <td>{{ body['body_id'] }}</td>
+    <td>{{ body['name'].title() }}</td>
+    <td>{{ bool(body['is_freshwater']) }}</td>
+      <td>{{ bool(body['is_stocked']) }}</td>
+      <td>{{ body['latitude'] }}, {{ body['longitude'] }}</td>
+    <td><a class="btn btn-outline-info btn-sm" href="/water_bodies/update:{{ body['body_id'] }}">Edit</a></td>
+    <td><a class="btn btn-outline-danger btn-sm" href="/water_bodies/delete:{{ body['body_id'] }}">Delete</a></td>
   </tr>
 
   {% endfor %}
