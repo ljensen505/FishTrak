@@ -16,9 +16,7 @@ HOST = os.getenv("HOST")
 USERNAME = os.getenv("U_NAME")
 PASSWORD = os.getenv("PASSWORD")
 DB = os.getenv("DB")
-print(USERNAME)
-print(PASSWORD)
-print(DB)
+
 
 app = Flask(__name__)
 
@@ -55,11 +53,8 @@ def fishermen():
 def add_fisherman():
     """add a fisherman to the db"""
     if request.method == 'POST':
-
-        # THIS DOES NOT WORK
-
         new_name = request.form.get('name')
-        # SQL query to add fisherman
+        # query to add fisherman
         query = f"INSERT INTO Fisherman (name) VALUES (%s)"
         cur = mysql.connection.cursor()
         cur.execute(query, (new_name,))
@@ -76,12 +71,25 @@ def update_fisherman(_id):
     updates a specified fisherman.
     This is a template and does not update anything.
     """
-
+    # query for original fisherman attributes
+    query = f"SELECT fisherman_id, name FROM Fisherman WHERE fisherman_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    person = cur.fetchall()[0]
 
     if request.method == 'POST':
+        new_name = request.form.get('name')
+
+        # update query
+        query = f"UPDATE Fisherman SET Fisherman.name = %s WHERE fisherman_id={_id}"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (new_name,))
+        mysql.connection.commit()
+
+        # redirect to all fishermen
         return redirect('/fishermen')
 
-    return render_template('update_fisherman.html', title='Update Fisherman', person={'name': 'placeholder'})
+    return render_template('update_fisherman.html', title='Update Fisherman', person=person)
 
 
 @app.route('/fishermen/delete:<_id>', methods=['GET', 'POST'])
@@ -94,8 +102,8 @@ def delete_fisherman(_id):
     query = f"SELECT name FROM Fisherman WHERE fisherman_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
-    person = cur.fetchall()
-    name = person[0]['name']
+    person = cur.fetchall()[0]
+    name = person['name']
 
     # query to delete fisherman
     query = "DELETE FROM Fisherman WHERE fisherman_id = %s;"
