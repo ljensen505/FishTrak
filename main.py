@@ -7,14 +7,13 @@ import os
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
-from boto.s3.connection import S3Connection
-# from credentials import HOST, USERNAME, PASSWORD, DB
+from credentials import HOST, USERNAME, PASSWORD, DB
 
 
-HOST = os.getenv("HOST")
-USERNAME = os.getenv("USERNAME")
-PASSWORD = os.getenv("PASSWORD")
-DB = os.getenv("DB")
+# HOST = os.environ["HOST"]
+# USERNAME = os.environ["USERNAME"]
+# PASSWORD = os.environ["PASSWORD"]
+# DB = os.environ['DB']
 
 app = Flask(__name__)
 
@@ -56,7 +55,6 @@ def add_fisherman():
 
         new_name = request.form.get('name')
         # SQL query to add fisherman
-        print(new_name)
         query = f"INSERT INTO Fisherman (name) VALUES (%s)"
         cur = mysql.connection.cursor()
         cur.execute(query, (new_name,))
@@ -73,12 +71,12 @@ def update_fisherman(_id):
     updates a specified fisherman.
     This is a template and does not update anything.
     """
-    person = FISHERMEN[_id]
+
 
     if request.method == 'POST':
         return redirect('/fishermen')
 
-    return render_template('update_fisherman.html', title='Update Fisherman', person=person)
+    return render_template('update_fisherman.html', title='Update Fisherman', person={'name': 'placeholder'})
 
 
 @app.route('/fishermen/delete:<_id>', methods=['GET', 'POST'])
@@ -87,12 +85,23 @@ def delete_fisherman(_id):
     deletes a specified fisherman.
     This is a template and does not delete anything.
     """
-    person = FISHERMEN[_id]
+    # query for fisherman using ID
+    query = f"SELECT name FROM Fisherman WHERE fisherman_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    person = cur.fetchall()
+    name = person[0]['name']
+
+    # query to delete fisherman
+    query = "DELETE FROM Fisherman WHERE fisherman_id = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (_id,))
+    mysql.connection.commit()
 
     if request.method == 'POST':
         return redirect('/fishermen')
 
-    return render_template('delete_fisherman.html', title='Delete Fisherman', person=person)
+    return render_template('delete_fisherman.html', title='Delete Fisherman', name=name)
 
 
 # LURES
