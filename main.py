@@ -239,8 +239,9 @@ def update_body(_id):
         longitude = request.form.get('longitude')
 
         # update query
-        # query = f"UPDATE Lure SET Lure.name = %s, Lure.weight = %s, Lure.color = %s, Lure.type = %s WHERE lure_id={_id}"
-        query = f"UPDATE Body_of_water SET Body_of_water.name = %s, Body_of_water.is_freshwater = %s, Body_of_water.is_stocked = %s, Body_of_water.latitude = %s, Body_of_water.longitude = %s WHERE body_id = {_id};"
+        query = f"UPDATE Body_of_water SET Body_of_water.name = %s, Body_of_water.is_freshwater = %s, " \
+                f"Body_of_water.is_stocked = %s, Body_of_water.latitude = %s, Body_of_water.longitude = %s " \
+                f"WHERE body_id = {_id};"
         cur = mysql.connection.cursor()
         cur.execute(query, (name, is_freshwater, is_stocked, latitude, longitude))
         mysql.connection.commit()
