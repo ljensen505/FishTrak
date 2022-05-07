@@ -4,6 +4,7 @@ Lucas Jensen
 Jerrod Lepper
 """
 import os
+import json
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
@@ -120,8 +121,16 @@ def delete_fisherman(_id):
 # LURES
 @app.route('/lures', methods=['GET', 'POST'])
 def lures():
-    """The route for displaying all lures"""
-    return render_template('lures.html', title='Lures', lures=LURES)
+    """
+    Display dem lures
+    """
+    if request.method == "GET":
+        query = "SELECT lure_id, name, weight, color,type FROM Lure"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        lures = cur.fetchall()
+
+        return render_template('lures.html', title='Lures', lures=lures)
 
 
 @app.route('/lures/update:<_id>', methods=['GET', 'POST'])
@@ -130,8 +139,32 @@ def update_lure(_id):
     updates a specified lure
     This is a template and does not update anything
     """
-    lure = LURES[_id]
 
+    """query = f"SELECT fisherman_id, name FROM Fisherman WHERE fisherman_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    person = cur.fetchall()[0]
+
+    if request.method == 'POST':
+        new_name = request.form.get('name')
+
+        # update query
+        query = f"UPDATE Fisherman SET Fisherman.name = %s WHERE fisherman_id={_id}"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (new_name,))
+        mysql.connection.commit()
+
+        # redirect to all fishermen
+        return redirect('/fishermen')
+
+    return render_template('update_fisherman.html', title='Update Fisherman', person=person)"""
+    print(_id)
+    query = f"SELECT lure_id FROM Lures WHERE lure_id={_id}"
+    print(query)
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    lure = cur.fetchall()
+    print(lure)
     if request.method == 'POST':
         return redirect('/lures')
 
@@ -155,8 +188,19 @@ def delete_lure(_id):
 @app.route('/lures/add', methods=['GET', 'POST'])
 def add_lure():
     """add a lure to the db"""
+
     if request.method == 'POST':
-        print(f"You added {request.form['name']} to the db! (not really)")
+        # This is ugly and I don't like it
+        name = request.form.get('name')
+        weight = request.form.get('weight')
+        color = request.form.get('color')
+        type = request.form.get('type')
+        # query to add a lure
+        query = f"INSERT INTO Lure (weight,name,color,type) VALUES (%s,%s,%s,%s)"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (weight,name,color,type))
+        mysql.connection.commit()
+        print(f"You added {request.form['name']} to the db! (For real)")
         return redirect('/lures')
     return render_template('add_lure.html', title='Add Lure')
 

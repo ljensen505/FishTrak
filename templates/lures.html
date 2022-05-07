@@ -24,12 +24,12 @@
   {% for lure in lures %}
 
   <tr>
-    <td>{{ lure }}</td>
-    <td>{{ lures[lure]['name'].title() }}</td>
-    <td>{{ lures[lure]['weight'] }}</td>
-      <td>{{ lures[lure]['color'] }}</td>
-      <td>{{ lures[lure]['type'] }}</td>
-    <td><a class="btn btn-outline-info btn-sm" href="/lures/update:{{ lure }}">Edit</a></td>
+    <td>{{ lure['lure_id'] }}</td>
+    <td>{{ lure['name'].title() }}</td>
+    <td>{{ lure['weight'] }}</td>
+      <td>{{ lure['color'] }}</td>
+      <td>{{ lure['type'] }}</td>
+    <td><a class="btn btn-outline-info btn-sm" href="/lures/update:{{ lure['lure_id'] }}">Edit</a></td>
     <td><a class="btn btn-outline-danger btn-sm" href="/lures/delete:{{ lure }}">Delete</a></td>
   </tr>
 
