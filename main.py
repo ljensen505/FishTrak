@@ -38,7 +38,7 @@ def home():
 
 
 # FISHERMEN
-@app.route('/fishermen')
+@app.route('/fishermen', methods=['GET', 'POST'])
 def fishermen():
     """The route for displaying all fishermen"""
     query = "SELECT * FROM Fisherman"
@@ -46,7 +46,16 @@ def fishermen():
     cur.execute(query)
     people = cur.fetchall()
 
-    return render_template('fishermen.html', title='Fishermen', people=people)
+    if request.method == 'POST':
+        # query to find the name
+        name = request.form.get('search').lower()
+        query = f"SELECT * FROM Fisherman"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        people = [person for person in cur.fetchall() if name in person['name'].lower()]
+        return render_template('fishermen.html', title='Results', people=people, searching=True)
+
+    return render_template('fishermen.html', title='Fishermen', people=people, searching=False)
 
 
 @app.route('/fishermen/add', methods=['GET', 'POST'])
