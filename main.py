@@ -4,7 +4,6 @@ Lucas Jensen
 Jerrod Lepper
 """
 import os
-import json
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
@@ -39,16 +38,15 @@ def home():
 
 
 # FISHERMEN
-@app.route('/fishermen', methods=['GET', 'POST'])
+@app.route('/fishermen')
 def fishermen():
     """The route for displaying all fishermen"""
-    if request.method == "GET":
-        query = "SELECT fisherman_id, name FROM Fisherman"
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-        people = cur.fetchall()
+    query = "SELECT * FROM Fisherman"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    people = cur.fetchall()
 
-        return render_template('fishermen.html', title='Fishermen', people=people)
+    return render_template('fishermen.html', title='Fishermen', people=people)
 
 
 @app.route('/fishermen/add', methods=['GET', 'POST'])
@@ -116,13 +114,11 @@ def delete_fisherman(_id):
     cur.execute(query, (_id,))
     mysql.connection.commit()
 
-    # TODO: implement redirect try and except block to avoid void tuple error
-    """if request.method == 'POST':
-        return redirect('/fishermen')"""
     return render_template('delete_fisherman.html', title='Delete Fisherman', name=name)
 
+
 # LURES
-@app.route('/lures', methods=['GET', 'POST'])
+@app.route('/lures')
 def lures():
     """
     Display dem lures
@@ -182,6 +178,7 @@ def delete_lure(_id):
 
     return render_template('delete_lure.html', title='Delete Lure', lure=lure)
 
+
 @app.route('/lures/add', methods=['GET', 'POST'])
 def add_lure():
     """add a lure to the db"""
@@ -199,13 +196,14 @@ def add_lure():
         mysql.connection.commit()
         print(f"You added {request.form['name']} to the db! (For real)")
         return redirect('/lures')
+
     return render_template('add_lure.html', title='Add Lure')
 
 
 # BODIES OF WATER
-@app.route('/water_bodies', methods=['GET', 'POST'])
+@app.route('/water_bodies')
 def water_bodies():
-    """The route for displaying all lures"""
+    """The route for displaying all bodies of water"""
     query = "SELECT * FROM Body_of_water"
     cur = mysql.connection.cursor()
     cur.execute(query)
@@ -308,10 +306,15 @@ def add_body():
 
 
 # SPECIES
-@app.route('/species', methods=['GET', 'POST'])
+@app.route('/species')
 def species():
     """The route for displaying all fish species"""
-    return render_template('species.html', title='Species', species=SPECIES)
+    query = "SELECT * FROM Species"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    species = cur.fetchall()
+
+    return render_template('species.html', title='Species', species=species)
 
 
 @app.route('/species/update:<_id>', methods=['GET', 'POST'])
@@ -334,10 +337,24 @@ def delete_species(_id):
     Deletes a specified fish species
     This is a template and does not delete anything yet
     """
-    fish = SPECIES[_id]
+    # query for original species attributes
+    query = f"SELECT * FROM Species WHERE species_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
 
-    if request.method == 'POST':
-        return redirect('/species')
+    # if the species no longer exists, redirect
+    try:
+        fish = cur.fetchall()[0]
+    except IndexError:
+        return redirect('/water_bodies')
+
+    name = fish['name']
+
+    # query to delete a species
+    query = "DELETE FROM Species WHERE species_id = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (_id,))
+    mysql.connection.commit()
 
     return render_template('delete_species.html', title='Delete Species', fish=fish)
 
@@ -346,8 +363,24 @@ def delete_species(_id):
 def add_species():
     """add a species to the db"""
     if request.method == 'POST':
-        print(f"You added {request.form['name']} to the db! (not really)")
+        # gather data from the form
+        name = request.form.get('name')
+        avg_weight = request.form.get('avg_weight')
+        if 'is_freshwater' in request.form:
+            is_freshwater = 1
+        else:
+            is_freshwater = 0
+        description = request.form.get('description')
+
+        # query to insert into Species
+        query = f"INSERT INTO Species (name, avg_weight, is_freshwater, description) " \
+                f"VALUES (%s, %s, %s, %s);"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (name, avg_weight, is_freshwater, description))
+        mysql.connection.commit()
+
         return redirect('/species')
+
     return render_template('add_species.html', title='Add Species')
 
 
