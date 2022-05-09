@@ -24,22 +24,22 @@
   {% for fish in fishes %}
 
   <tr>
-    <td>{{ fish }}</td>
-    <td>{{ species[str(fishes[fish]['species_id'])]['name'].title() }}</td>
-    <td>{{ bodies[str(fishes[fish]['body_of_water_id'])]['name'].title() }}</td>
+    <td>{{ fish['ID'] }}</td>
+    <td>{{ fish['Species'].title() }}</td>
+    <td>{{ fish['Water_Body'].title() }}</td>
 
-    {% if fishes[fish]['lure_id'] == None %}
+    {% if fish['lure'] == None %}
         <td></td>
     {% else %}
-        <td>{{ lures[str(fishes[fish]['lure_id'])]['name'] }}</td>
+        <td>{{ fish['lure'] }}</td>
     {% endif %}
 
-    <td>{{ fishermen[str(fishes[fish]['fisherman_id'])]['name'] }}</td>
+    <td>{{ fish['angler'] }}</td>
 
-    {% if fishes[fish]['weight'] == None %}
+    {% if fish['weight'] == None %}
         <td></td>
     {% else %}
-        <td>{{ fishes[fish]['weight'] }}</td>
+        <td>{{ fish['weight'] }}</td>
     {% endif %}
 
     <td><a class="btn btn-outline-info btn-sm" href="/caught_fish/update:{{ fish }}">Edit</a></td>
