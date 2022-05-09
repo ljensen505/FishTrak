@@ -165,6 +165,13 @@ def delete_lure(_id):
 
     return redirect('/lures')
 
+    query = "DELETE FROM Lure WHERE lure_id = %s"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (_id,))
+    mysql.connection.commit()
+
+    return render_template('delete_lure.html', title='Delete Lure', lure=lure)
+
 
 @app.route('/lures/add', methods=['GET', 'POST'])
 def add_lure():
@@ -248,6 +255,19 @@ def delete_body(_id):
     """
     Deletes a specified body of water
     """
+    # query for original body of water attributes
+    query = f"SELECT * FROM Body_of_water WHERE body_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+
+    # if the body of water no longer exists, redirect
+    try:
+        body = cur.fetchall()[0]
+    except IndexError:
+        return redirect('/water_bodies')
+
+    name = body['name']
+
     # query to delete body of water
     query = "DELETE FROM Body_of_water WHERE body_id = %s;"
     cur = mysql.connection.cursor()
@@ -346,6 +366,17 @@ def delete_species(_id):
     Deletes a specified fish species
     This is a template and does not delete anything yet
     """
+    # query for original species attributes
+    query = f"SELECT * FROM Species WHERE species_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+
+    # if the species no longer exists, redirect
+    try:
+        fish = cur.fetchall()[0]
+    except IndexError:
+        return redirect('/water_bodies')
+
     # query to delete a species
     query = "DELETE FROM Species WHERE species_id = %s;"
     cur = mysql.connection.cursor()
@@ -415,7 +446,22 @@ def add_fish():
     cur = mysql.connection.cursor()
     cur.execute(query)
     species = cur.fetchall()
-    print(species)
+
+    query = "SELECT * FROM Lure"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    lures = cur.fetchall()
+
+    query = "SELECT * FROM Body_of_water"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    bodies = cur.fetchall()
+
+    query = "SELECT * FROM Fisherman"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    fishermen = cur.fetchall()
+
 
     if request.method == 'POST':
         species = request.form.get('species')
@@ -432,15 +478,15 @@ def add_fish():
         (SELECT fisherman_id FROM Fisherman WHERE name = '{angler}'), \
         (SELECT lure_id FROM Lure WHERE name = '{lure}'), \
         {weight})"
-
+        print(query)
         cur = mysql.connection.cursor()
-        cur.execute(query)
+        print(cur.execute(query))
         mysql.connection.commit()
 
         print(f"You added a fish to the db! (I think?)")
         return redirect('/caught_fish')
-    return render_template('add_fish.html', title='Add Fish', species=species, bodies=BODIES_OF_WATER, lures=LURES,
-                           fishermen=FISHERMEN)
+    return render_template('add_fish.html', title='Add Fish', species=species, bodies=bodies, lures=lures,
+                           fishermen=fishermen)
 
 
 @app.route('/caught_fish/update:<_id>', methods=['GET', 'POST'])

@@ -18,8 +18,7 @@
                         <option disable selected value=></option>
 
                         {% for fish in species %}
-
-                            <option  value="{{ species[fish]['name'] }}">{{ species[fish]['name'] }}</option>
+                            <option  value="{{ fish['name'] }}">{{ fish['name'] }}</option>
 
                         {% endfor %}
                     </select>
@@ -33,7 +32,7 @@
 
                         {% for body in bodies %}
 
-                            <option value="{{ bodies[body]['name'] }}">{{ bodies[body]['name'] }}</option>
+                            <option value="{{ body['name'] }}">{{ body['name'] }}</option>
 
                         {% endfor %}
                     </select>
@@ -47,7 +46,7 @@
 
                         {% for lure in lures %}
 
-                            <option value="{{ lures[lure]['name'] }}">{{ lures[lure]['name'] }}</option>
+                            <option value="{{ lure['name'] }}">{{ lure['name'] }}</option>
 
                         {% endfor %}
                     </select>
@@ -61,7 +60,7 @@
 
                         {% for fisherman in fishermen %}
 
-                            <option value="{{ fishermen[fisherman]['name'] }}">{{ fishermen[fisherman]['name'] }}</option>
+                            <option value="{{ fisherman['name'] }}">{{ fisherman['name'] }}</option>
 
                         {% endfor %}
                     </select>
