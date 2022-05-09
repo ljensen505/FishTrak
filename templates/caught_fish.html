@@ -28,18 +28,18 @@
     <td>{{ fish['Species'].title() }}</td>
     <td>{{ fish['Water_Body'].title() }}</td>
 
-    {% if fish['lure'] == None %}
+    {% if fish['Lure'] == None %}
         <td></td>
     {% else %}
-        <td>{{ fish['lure'] }}</td>
+        <td>{{ fish['Lure'] }}</td>
     {% endif %}
 
-    <td>{{ fish['fishermen'] }}</td>
+    <td>{{ fish['Angler'].title()}}</td>
 
-    {% if fish['weight'] == None %}
+    {% if fish['Weight'] == None %}
         <td></td>
     {% else %}
-        <td>{{ fish['weight'] }}</td>
+        <td>{{ fish['Weight'] }}</td>
     {% endif %}
 
     <td><a class="btn btn-outline-info btn-sm" href="/caught_fish/update:{{ fish }}">Edit</a></td>
