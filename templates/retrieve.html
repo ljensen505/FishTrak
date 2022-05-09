@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="input-group rounded">
+<form method="post">
+    <span class="shadow-sm input-group border-0">
+      <input id="search" name="search" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+        <button class="shadow-sm btn btn-outline-dark btn-sm">Go</button>
+    </span>
+</form>
+</div>
+{#<p>Items: {{ items }}</p>#}
+{#<p>Attributes: {{ attributes }}</p>#}
+<table class="table table-hover">
+<tr>
+    {% for attribute in attributes %}
+        <th>{{ attribute.title() }}</th>
+    {% endfor %}
+    <th></th>
+    <th></th>
+</tr>
+  {% for item in items %}
+  <tr>
+    {% for attribute in attributes %}
+        <td>{{ item[attributes[attribute]] }}</td>
+    {% endfor %}
+    <td><a class="shadow-sm btn btn-outline-info btn-sm" href="/{{ location }}/update:{{ item[attributes['id']] }}">Edit</a></td>
+    <td><a class="shadow-sm btn btn-outline-danger btn-sm" href="/{{ location }}/delete:{{ item[attributes['id']] }}">Delete</a></td>
+  </tr>
+  {% endfor %}
+</table>
+<div class="container">
+    {% if searching %}
+        <a class="shadow btn btn-outline-secondary" href="/{{ location }}">All</a>
+    {% else %}
+        <a class="shadow btn btn-outline-secondary" href="/{{ location }}/add">New</a>
+    {% endif %}
+</div>
+
+</div>
+
+{% endblock %}
