@@ -397,17 +397,42 @@ def add_species():
 @app.route('/caught_fish')
 def caught_fish():
     """The route for displaying all caught fish"""
-    print(SPECIES[str(CAUGHT_FISH['1']['species_id'])]['name'])
+    """print(SPECIES[str(CAUGHT_FISH['1']['species_id'])]['name'])"""
+    query = "SELECT * FROM Caught_fish"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    fishes = cur.fetchall()
+    print(fishes)
+
     # print(SPECIES[CAUGHT_FISH['1']['species_id']])
-    return render_template('caught_fish.html', title='Caught Fish', fishes=CAUGHT_FISH, species=SPECIES,
-                           bodies=BODIES_OF_WATER, lures=LURES, fishermen=FISHERMEN, str=str)
+    return render_template('caught_fish.html', title='Caught Fish', fishes=fishes)
 
 
 @app.route('/caught_fish/add', methods=['GET', 'POST'])
 def add_fish():
     """adds a caught fish to the db"""
+
     if request.method == 'POST':
-        print(f"You added a fish to the db! (not really)")
+        species = request.form.get('species')
+        location = request.form.get('location')
+        lure = request.form.get('lure')
+        angler = request.form.get('fisherman')
+        weight = request.form.get('weight')
+
+        # TODO: Make functional with ' in lake names and others (St Mary's lake is troubesome), add branching for NULL vals in Lure
+        # query to get insert new body of water
+        query = f"INSERT INTO Caught_fish (species_id, body_of_water_id, lure_id, fisherman_id, specific_weight) \
+        VALUES ((SELECT species_id FROM Species WHERE name = '{species}'), \
+        (SELECT body_id FROM Body_of_water WHERE name = '{location}'), \
+        (SELECT fisherman_id FROM Fisherman WHERE name = '{angler}'), \
+        (SELECT lure_id FROM Lure WHERE name = '{lure}'), \
+        {weight})"
+
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        mysql.connection.commit()
+
+        print(f"You added a fish to the db! (I think?)")
         return redirect('/caught_fish')
     return render_template('add_fish.html', title='Add Fish', species=SPECIES, bodies=BODIES_OF_WATER, lures=LURES,
                            fishermen=FISHERMEN)
