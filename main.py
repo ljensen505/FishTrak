@@ -7,25 +7,15 @@ import os
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
-from dotenv import load_dotenv
-
-
-# Comment the following line out when deploying to Heroku
-# load_dotenv()
-
-HOST = os.getenv("HOST")
-USERNAME = os.getenv("U_NAME")
-PASSWORD = os.getenv("PASSWORD")
-DB = os.getenv("DB")
 
 
 app = Flask(__name__)
 
 # database connection info
-app.config["MYSQL_HOST"] = HOST
-app.config["MYSQL_USER"] = USERNAME
-app.config["MYSQL_PASSWORD"] = PASSWORD
-app.config["MYSQL_DB"] = DB
+app.config["MYSQL_HOST"] = os.getenv("HOST")
+app.config["MYSQL_USER"] = os.getenv("U_NAME")
+app.config["MYSQL_PASSWORD"] = os.getenv("PASSWORD")
+app.config["MYSQL_DB"] = os.getenv("DB")
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
@@ -46,6 +36,7 @@ def fishermen():
     cur.execute(query)
     people = cur.fetchall()
 
+    # search tool
     if request.method == 'POST':
         # query to find the name
         name = request.form.get('search').lower()
@@ -106,39 +97,28 @@ def delete_fisherman(_id):
     """
     deletes a specified fisherman.
     """
-    # query for fisherman using ID
-    query = f"SELECT name FROM Fisherman WHERE fisherman_id={_id}"
+    # query to delete fisherman
+    query = f"DELETE FROM Fisherman WHERE fisherman_id = {_id};"
     cur = mysql.connection.cursor()
     cur.execute(query)
-    # If the angler no longer exists, redirect (probably a better way to refresh the anglers than this)
-    try:
-        person = cur.fetchall()[0]
-    except IndexError:
-        return redirect('/fishermen')
-    name = person['name']
-
-    # query to delete fisherman
-    query = "DELETE FROM Fisherman WHERE fisherman_id = %s;"
-    cur = mysql.connection.cursor()
-    cur.execute(query, (_id,))
     mysql.connection.commit()
 
-    return render_template('delete_fisherman.html', title='Delete Fisherman', name=name)
+    return redirect('/fishermen')
 
 
 # LURES
-@app.route('/lures')
+@app.route('/lures', methods=['GET', 'POST'])
 def lures():
     """
     Display dem lures
     """
-    if request.method == "GET":
-        query = "SELECT lure_id, name, weight, color,type FROM Lure"
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-        lures = cur.fetchall()
+    # query to find all lures
+    query = "SELECT lure_id, name, weight, color,type FROM Lure"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    lures = cur.fetchall()
 
-        return render_template('lures.html', title='Lures', lures=lures)
+    return render_template('lures.html', title='Lures', lures=lures)
 
 
 @app.route('/lures/update:<_id>', methods=['GET', 'POST'])
@@ -172,20 +152,13 @@ def delete_lure(_id):
     """
     Deletes a specified lure
     """
-    query = f"SELECT name FROM Lure WHERE lure_id={_id}"
+    # Query to delete lure
+    query = f"DELETE FROM Lure WHERE lure_id = {_id};"
     cur = mysql.connection.cursor()
     cur.execute(query)
-    try:
-        lure = cur.fetchall()
-    except IndexError:
-        return redirect('/lures')
-
-    query = "DELETE FROM Lure WHERE lure_id = %s"
-    cur = mysql.connection.cursor()
-    cur.execute(query, (_id,))
     mysql.connection.commit()
 
-    return render_template('delete_lure.html', title='Delete Lure', lure=lure)
+    return redirect('/lures')
 
 
 @app.route('/lures/add', methods=['GET', 'POST'])
@@ -210,7 +183,7 @@ def add_lure():
 
 
 # BODIES OF WATER
-@app.route('/water_bodies')
+@app.route('/water_bodies', methods=['GET', 'POST'])
 def water_bodies():
     """The route for displaying all bodies of water"""
     query = "SELECT * FROM Body_of_water"
@@ -264,26 +237,13 @@ def delete_body(_id):
     """
     Deletes a specified body of water
     """
-    # query for original body of water attributes
-    query = f"SELECT * FROM Body_of_water WHERE body_id={_id}"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-
-    # if the body of water no longer exists, redirect
-    try:
-        body = cur.fetchall()[0]
-    except IndexError:
-        return redirect('/water_bodies')
-
-    name = body['name']
-
     # query to delete body of water
     query = "DELETE FROM Body_of_water WHERE body_id = %s;"
     cur = mysql.connection.cursor()
     cur.execute(query, (_id,))
     mysql.connection.commit()
 
-    return render_template('delete_body.html', title='Delete Body', body=body)
+    return redirect('/water_bodies')
 
 
 @app.route('/water_bodies/add', methods=['GET', 'POST'])
@@ -315,7 +275,7 @@ def add_body():
 
 
 # SPECIES
-@app.route('/species')
+@app.route('/species', methods=['GET', 'POST'])
 def species():
     """The route for displaying all fish species"""
     query = "SELECT * FROM Species"
@@ -368,24 +328,13 @@ def delete_species(_id):
     Deletes a specified fish species
     This is a template and does not delete anything yet
     """
-    # query for original species attributes
-    query = f"SELECT * FROM Species WHERE species_id={_id}"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-
-    # if the species no longer exists, redirect
-    try:
-        fish = cur.fetchall()[0]
-    except IndexError:
-        return redirect('/water_bodies')
-
     # query to delete a species
     query = "DELETE FROM Species WHERE species_id = %s;"
     cur = mysql.connection.cursor()
     cur.execute(query, (_id,))
     mysql.connection.commit()
 
-    return render_template('delete_species.html', title='Delete Species', fish=fish)
+    return redirect('/species')
 
 
 @app.route('/species/add', methods=['GET', 'POST'])
