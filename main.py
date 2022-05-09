@@ -332,9 +332,31 @@ def update_species(_id):
     updates a specified fish species
     This is a template and does not update anything
     """
-    fish = SPECIES[_id]
+    # query for species using ID
+    query = f"SELECT * FROM Species WHERE species_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    fish = cur.fetchall()[0]
 
     if request.method == 'POST':
+        name = request.form.get('name')
+        avg_weight = request.form.get('avg_weight')
+        if 'is_freshwater' in request.form:
+            is_freshwater = 1
+        else:
+            is_freshwater = 0
+        description = request.form.get('description')
+
+        # update query
+        query = f"UPDATE Species " \
+                f"SET Species.name = %s, Species.avg_weight = %s, Species.description = %s, Species.is_freshwater = %s " \
+                f"WHERE species_id = {_id};"
+        print(query)
+        cur = mysql.connection.cursor()
+        cur.execute(query, (name, avg_weight, description, is_freshwater))
+        mysql.connection.commit()
+
+        # redirect to all species
         return redirect('/species')
 
     return render_template('update_species.html', title='Update Species', fish=fish)
@@ -356,8 +378,6 @@ def delete_species(_id):
         fish = cur.fetchall()[0]
     except IndexError:
         return redirect('/water_bodies')
-
-    name = fish['name']
 
     # query to delete a species
     query = "DELETE FROM Species WHERE species_id = %s;"
