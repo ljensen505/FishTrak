@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block html_head %}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <form method="post">
+        <table class="table">
+            {% for attribute in attributes %}
+            <tr>
+                <td><label for="{{ attribute['name'].lower() }}">{{ attribute['name'] }}:</label></td>
+                <td><input id="{{ attribute['name'].lower() }}"
+                           name="{{ attribute['name'].lower() }}"
+                           type="{{ attribute['type'] }}"
+                           required step="any"></td>
+            </tr>
+            {% endfor %}
+        </table>
+        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+    </form>
+</div>
+
+{% endblock %}

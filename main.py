@@ -52,17 +52,22 @@ def fishermen():
 @app.route('/fishermen/add', methods=['GET', 'POST'])
 def add_fisherman():
     """add a fisherman to the db"""
+    attributes = [
+        {'name': 'Name', 'type': 'text'}
+    ]
     if request.method == 'POST':
-        new_name = request.form.get('name')
+        # gather info from posted form
+        name = request.form.get('name')
+
         # query to add fisherman
         query = f"INSERT INTO Fisherman (name) VALUES (%s)"
         cur = mysql.connection.cursor()
-        cur.execute(query, (new_name,))
+        cur.execute(query, (name,))
         mysql.connection.commit()
 
         return redirect('/fishermen')
 
-    return render_template('add_fisherman.html', title='Add Fisherman')
+    return render_template('add.html', title='Add Fisherman', attributes=attributes)
 
 
 @app.route('/fishermen/update:<_id>', methods=['GET', 'POST'])
@@ -164,13 +169,19 @@ def delete_lure(_id):
 @app.route('/lures/add', methods=['GET', 'POST'])
 def add_lure():
     """add a lure to the db"""
-
+    attributes = [
+        {'name': 'Name', 'type': 'text'},
+        {'name': 'Weight', 'type': 'number'},
+        {'name': 'Color', 'type': 'text'},
+        {'name': 'type', 'type': 'text'}
+    ]
     if request.method == 'POST':
         # This is ugly and I don't like it
         name = request.form.get('name')
         weight = request.form.get('weight')
         color = request.form.get('color')
         type = request.form.get('type')
+
         # query to add a lure
         query = f"INSERT INTO Lure (weight,name,color,type) VALUES (%s,%s,%s,%s)"
         cur = mysql.connection.cursor()
@@ -179,7 +190,7 @@ def add_lure():
         print(f"You added {request.form['name']} to the db! (For real)")
         return redirect('/lures')
 
-    return render_template('add_lure.html', title='Add Lure')
+    return render_template('add.html', title='Add Lure', attributes=attributes)
 
 
 # BODIES OF WATER
@@ -249,14 +260,21 @@ def delete_body(_id):
 @app.route('/water_bodies/add', methods=['GET', 'POST'])
 def add_body():
     """add a body of water to the db"""
+    attributes = [
+        {'name': 'Name', 'type': 'text'},
+        {'name': 'Freshwater', 'type': 'checkbox'},
+        {'name': 'Stocked', 'type': 'checkbox'},
+        {'name': 'Latitude', 'type': 'number'},
+        {'name': 'Longitude', 'type': 'number'}
+    ]
     if request.method == 'POST':
         # gather data from the form
         name = request.form.get('name')
-        if 'is_freshwater' in request.form:
+        if 'freshwater' in request.form:
             is_freshwater = 1
         else:
             is_freshwater = 0
-        if 'is_stocked' in request.form:
+        if 'stocked' in request.form:
             is_stocked = 1
         else:
             is_stocked = 0
@@ -271,7 +289,7 @@ def add_body():
         mysql.connection.commit()
 
         return redirect('/water_bodies')
-    return render_template('add_body.html', title='Add Body of Water')
+    return render_template('add.html', title='Add Body of Water', attributes=attributes)
 
 
 # SPECIES
@@ -340,11 +358,17 @@ def delete_species(_id):
 @app.route('/species/add', methods=['GET', 'POST'])
 def add_species():
     """add a species to the db"""
+    attributes = [
+        {'name': 'Name', 'type': 'text'},
+        {'name': 'Avg Weight', 'type': 'number'},
+        {'name': 'Freshwater', 'type': 'checkbox'},
+        {'name': 'Description', 'type': 'text'}
+    ]
     if request.method == 'POST':
         # gather data from the form
         name = request.form.get('name')
-        avg_weight = request.form.get('avg_weight')
-        if 'is_freshwater' in request.form:
+        avg_weight = request.form.get('avg weight')
+        if 'freshwater' in request.form:
             is_freshwater = 1
         else:
             is_freshwater = 0
@@ -359,7 +383,7 @@ def add_species():
 
         return redirect('/species')
 
-    return render_template('add_species.html', title='Add Species')
+    return render_template('add.html', title='Add Species', attributes=attributes)
 
 
 # CAUGHT_FISH
