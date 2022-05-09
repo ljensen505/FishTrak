@@ -443,5 +443,5 @@ def delete_fish(_id):
     return render_template('delete_fish.html', title='Delete Fish', fish=fish, species=SPECIES, str=str)
 
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
