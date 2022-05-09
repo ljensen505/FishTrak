@@ -8,9 +8,6 @@
 {% block content %}
 
 <div class="container">
-
-    <p class="lead">No actual update functionality yet. All sample data. You'll be redirected upon submit.</p>
-
     <form method="post">
         <table class="table">
             <tr>
@@ -23,7 +20,11 @@
             </tr>
             <tr>
                 <td><label for="is_freshwater">Freshwater:</label></td>
-                <td><input name="is_freshwater" id="is_freshwater" type="checkbox"></td>
+                {% if fish['is_freshwater'] == 1 %}
+                    <td><input name="is_freshwater" id="is_freshwater" type="checkbox" checked></td>
+                {% else %}
+                    <td><input name="is_freshwater" id="is_freshwater" type="checkbox"></td>
+                {% endif %}
             </tr>
             <tr>
                 <td><label for="description">Description</label></td>
