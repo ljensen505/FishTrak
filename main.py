@@ -398,14 +398,20 @@ def add_species():
 def caught_fish():
     """The route for displaying all caught fish"""
     """print(SPECIES[str(CAUGHT_FISH['1']['species_id'])]['name'])"""
-    query = "SELECT * FROM Caught_fish"
+    query = "SELECT Caught_fish.caught_fish_id, Species.name, Body_of_water.name, Lure.name, Fisherman.name, Caught_fish.specific_weight " \
+            "FROM Caught_fish " \
+            "INNER JOIN Species ON Caught_fish.species_id=Species.species_id " \
+            "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
+            "INNER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
+            "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
+    print(query)
     cur = mysql.connection.cursor()
     cur.execute(query)
-    fishes = cur.fetchall()
-    print(fishes)
+    caught = cur.fetchall()
+    print(caught)
 
     # print(SPECIES[CAUGHT_FISH['1']['species_id']])
-    return render_template('caught_fish.html', title='Caught Fish', fishes=fishes)
+    return render_template('caught_fish.html', title='Caught Fish', fishes=caught)
 
 
 @app.route('/caught_fish/add', methods=['GET', 'POST'])
