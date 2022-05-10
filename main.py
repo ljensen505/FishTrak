@@ -24,7 +24,7 @@ mysql = MySQL(app)
 @app.route('/')
 def home():
     """The route for the homepage"""
-    return render_template('index.html', title='Homepage')
+    return render_template('home.html', title='Homepage')
 
 
 # FISHERMEN
@@ -40,11 +40,11 @@ def fishermen():
     # If the user is searching
     if request.method == 'POST':
         # query to find the name
-        name = request.form.get('search').lower()
+        param = request.form.get('search').lower()
         query = f"SELECT * FROM Fisherman"
         cur = mysql.connection.cursor()
         cur.execute(query)
-        people = [person for person in cur.fetchall() if name in person['name'].lower()]
+        people = [person for person in cur.fetchall() if param in person['name'].lower()]
 
         searching = True
         title = 'Results'
@@ -131,13 +131,41 @@ def lures():
     """
     Display dem lures
     """
-    # query to find all lures
-    query = "SELECT lure_id, name, weight, color,type FROM Lure"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    lures = cur.fetchall()
+    attributes = {
+        'id': 'lure_id',
+        'name': 'name',
+        'weight': 'weight',
+        'color': 'color',
+        'type': 'type'
+    }
 
-    return render_template('lures.html', title='Lures', lures=lures)
+    # if the user is searching
+    if request.method == 'POST':
+        # query to find search results
+        param = request.form.get('search').lower()
+        query = f"SELECT * FROM Lure"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        lures = [lure for lure in cur.fetchall()
+                 if param in lure['name'].lower()
+                 or param in lure['color'].lower()
+                 or param in lure['type'].lower()]
+
+        searching = True
+        title = 'Results'
+
+    else:
+        # query to find all lures
+        query = "SELECT lure_id, name, weight, color,type FROM Lure"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        lures = cur.fetchall()
+
+        title = 'Lures'
+        searching = False
+
+    return render_template('retrieve.html', title=title, location='lures', items=lures, attributes=attributes,
+                           searching=searching)
 
 
 @app.route('/lures/update:<_id>', methods=['GET', 'POST'])
@@ -145,6 +173,7 @@ def update_lure(_id):
     """
     updates a specified lure
     """
+    # TODO: This is broken
     query = f"SELECT lure_id FROM Lure WHERE lure_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
@@ -218,12 +247,37 @@ def add_lure():
 @app.route('/water_bodies', methods=['GET', 'POST'])
 def water_bodies():
     """The route for displaying all bodies of water"""
-    query = "SELECT * FROM Body_of_water"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    bodies = cur.fetchall()
+    attributes = {
+        'id': 'body_id',
+        'name': 'name',
+        'freshwater?': 'is_freshwater',
+        'stocked?': 'is_stocked',
+        'location': ('latitude', 'longitude')
+    }
 
-    return render_template('water_bodies.html', title='Bodies of Water', bodies=bodies, bool=bool)
+    if request.method == 'POST':
+        # query for search results
+        param = request.form.get('search').lower()
+        query = f"SELECT * FROM Body_of_water"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        bodies = [body for body in cur.fetchall() if param in body['name'].lower()]
+
+        searching = True
+        title = 'Results'
+
+    else:
+        # query for everything
+        query = "SELECT * FROM Body_of_water"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        bodies = cur.fetchall()
+
+        searching = False
+        title = 'Bodies of Water'
+
+    return render_template('retrieve.html', title=title, location='water_bodies', searching=searching,
+                           attributes=attributes, items=bodies)
 
 
 @app.route('/water_bodies/update:<_id>', methods=['GET', 'POST'])
@@ -330,12 +384,39 @@ def add_body():
 @app.route('/species', methods=['GET', 'POST'])
 def species():
     """The route for displaying all fish species"""
-    query = "SELECT * FROM Species"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    species = cur.fetchall()
+    attributes = {
+        'id': 'species_id',
+        'name': 'name',
+        'avg weight': 'avg_weight',
+        'freshwater?': 'is_freshwater',
+        'description': 'description'
+    }
 
-    return render_template('species.html', title='Species', species=species)
+    if request.method == 'POST':
+        # query for search parameter
+        param = request.form.get('search').lower()
+        query = f"SELECT * FROM Species"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+
+        species = [item for item in cur.fetchall()
+                   if param in item['name'].lower()
+                   or param in item['description'].lower()]
+
+        title = 'Results'
+        searching = True
+
+    else:
+        query = "SELECT * FROM Species"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        species = cur.fetchall()
+
+        title = 'Species'
+        searching = False
+
+    return render_template('retrieve.html', title=title, location='species', items=species, attributes=attributes,
+                           searching=searching)
 
 
 @app.route('/species/update:<_id>', methods=['GET', 'POST'])
