@@ -14,11 +14,18 @@
                 <td><input id="{{ attribute['name'].lower() }}"
                            name="{{ attribute['name'].lower() }}"
                            type="{{ attribute['type'] }}"
-                           required step="any"></td>
+                        {% if 'required' in attribute %}
+                            required step="any"
+                        {% endif %}
+                        {% if 'maxlength' in attribute %}
+                            maxlength="{{ attribute['maxlength'] }}"
+                        {% endif %}
+                           class="shadow-sm rounded"
+                ></td>
             </tr>
             {% endfor %}
         </table>
-        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+        <button type="submit" class="shadow btn btn-outline-secondary">Add</button>
     </form>
 </div>
 

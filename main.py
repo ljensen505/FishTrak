@@ -66,8 +66,12 @@ def fishermen():
 @app.route('/fishermen/add', methods=['GET', 'POST'])
 def add_fisherman():
     """add a fisherman to the db"""
+    # a list of attributes to be iterated over when rendering the html file
     attributes = [
-        {'name': 'Name', 'type': 'text'}
+        {'name': 'Name',
+         'type': 'text',
+         'maxlength': 45,
+         'required': 'required'}
     ]
     if request.method == 'POST':
         # gather info from posted form
@@ -220,10 +224,10 @@ def delete_lure(_id):
 def add_lure():
     """add a lure to the db"""
     attributes = [
-        {'name': 'Name', 'type': 'text'},
-        {'name': 'Weight', 'type': 'number'},
-        {'name': 'Color', 'type': 'text'},
-        {'name': 'type', 'type': 'text'}
+        {'name': 'Name', 'type': 'text', 'required': 'required'},
+        {'name': 'Weight', 'type': 'number', 'required': 'required'},
+        {'name': 'Color', 'type': 'text', 'required': 'required'},
+        {'name': 'type', 'type': 'text', 'required': 'required'}
     ]
     if request.method == 'POST':
         # This is ugly and I don't like it
@@ -349,12 +353,13 @@ def delete_body(_id):
 def add_body():
     """add a body of water to the db"""
     attributes = [
-        {'name': 'Name', 'type': 'text'},
+        {'name': 'Name', 'type': 'text', 'required': 'required'},
         {'name': 'Freshwater', 'type': 'checkbox'},
         {'name': 'Stocked', 'type': 'checkbox'},
-        {'name': 'Latitude', 'type': 'number'},
-        {'name': 'Longitude', 'type': 'number'}
+        {'name': 'Latitude', 'type': 'number', 'required': 'required'},
+        {'name': 'Longitude', 'type': 'number', 'required': 'required'}
     ]
+
     if request.method == 'POST':
         # gather data from the form
         name = request.form.get('name')
@@ -485,11 +490,12 @@ def delete_species(_id):
 def add_species():
     """add a species to the db"""
     attributes = [
-        {'name': 'Name', 'type': 'text'},
-        {'name': 'Avg Weight', 'type': 'number'},
+        {'name': 'Name', 'type': 'text', 'required': 'required'},
+        {'name': 'Avg Weight', 'type': 'number', 'required': 'required'},
         {'name': 'Freshwater', 'type': 'checkbox'},
         {'name': 'Description', 'type': 'text'}
     ]
+
     if request.method == 'POST':
         # gather data from the form
         name = request.form.get('name')

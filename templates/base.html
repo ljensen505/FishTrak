@@ -13,30 +13,37 @@
     {% block html_head %}{% endblock %}
   </head>
 <body style="font-family: 'Lato', sans-serif;">
+
+
+<a style="margin: 0; padding: 0" class="nav-link" href="/">
+    <h1 style="margin-bottom: 0" class="p-3 bg-primary text-white">FishTrak o'Matic</h1>
+</a>
+{% set routes = ['fishermen', 'lures', 'water_bodies', 'species', 'caught_fish'] %}
+{% set titles = ['Fishermen', 'Lures', 'Water Bodies', 'Species', 'Caught Fish'] %}
 <nav class="navbar navbar-expand navbar-dark bg-primary shadow">
   <div class="container-fluid">
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" href="/">FishTrak</a>
-        <a class="nav-link" href="/fishermen">Fishermen</a>
-          <a href="/lures" class="nav-link">Lures</a>
-          <a href="/water_bodies" class="nav-link">Bodies of Water</a>
-          <a href="/species" class="nav-link">Species</a>
-          <a href="/caught_fish" class="nav-link">Caught Fish</a>
-
+          {% for i in range(routes|length) %}
+              {% if location == routes[i] %}
+                <a class="nav-link active" href="/{{ routes[i] }}">{{ titles[i] }}</a>
+              {% else %}
+                <a class="nav-link" href="/{{ routes[i] }}">{{ titles[i] }}</a>
+              {% endif %}
+          {% endfor %}
       </div>
     </div>
   </div>
 </nav>
-    <div id="content">
-      <div class="jumbotron jumbotron-fluid">
-        <div class="container">
-          <h1 class="display-4">FishTrack o'Matic</h1>
-          <h2 style="font-weight: bold">{{ title }}</h2>
-        </div>
-      </div>
-    {% block content %}{% endblock %}
+
+<div style="margin-top: 10px;" id="content">
+  <div class="">
+    <div class="container">
+      <h2 style="font-weight: bold">{{ title }}</h2>
+    </div>
   </div>
+{% block content %}{% endblock %}
+</div>
 
   <div id="footer">
     {% block footer %}
