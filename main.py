@@ -249,7 +249,7 @@ def add_lure():
 
 # BODIES OF WATER
 @app.route('/water_bodies', methods=['GET', 'POST'])
-def water_bodies():
+def water_bodies(param=None):
     """The route for displaying all bodies of water"""
     attributes = {
         'id': 'body_id',
@@ -259,13 +259,14 @@ def water_bodies():
         'location': ('latitude', 'longitude')
     }
 
-    if request.method == 'POST':
+    if request.method == 'POST' or param:
         # query for search results
-        param = request.form.get('search').lower()
+        if not param:
+            param = request.form.get('search').lower()
         query = f"SELECT * FROM Body_of_water"
         cur = mysql.connection.cursor()
         cur.execute(query)
-        bodies = [body for body in cur.fetchall() if param in body['name'].lower()]
+        bodies = [body for body in cur.fetchall() if param.lower() in body['name'].lower()]
 
         searching = True
         title = 'Results'
@@ -282,6 +283,11 @@ def water_bodies():
 
     return render_template('retrieve.html', title=title, location='water_bodies', searching=searching,
                            attributes=attributes, items=bodies)
+
+
+@app.route('/water_bodies/<name>')
+def find_body(name):
+    return water_bodies(param=name)
 
 
 @app.route('/water_bodies/update:<_id>', methods=['GET', 'POST'])
@@ -618,6 +624,44 @@ def delete_fish(_id):
         return redirect('/caught_fish')
 
     return render_template('delete_fish.html', title='Delete Fish', fish=fish, species=SPECIES, str=str)
+
+
+@app.route('/<table>/<_id>')
+def details(table, _id):
+    """
+    View the details of an attribute
+    example: click a body of water and see all fish that appear
+    """
+    # query to find entity with matching table and id
+    query = f"SELECT * FROM {table.title()} WHERE {table}_id = {_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    entity = cur.fetchall()[0]
+
+    if table == 'species':
+        # view a page that shows details of a given species
+        # sample query:
+        # SELECT * FROM Species_has_body_of_water WHERE species_id = 1;
+
+        # query for body_ids
+        query = f"SELECT body_of_water_id FROM Species_has_body_of_water WHERE species_id = {_id}"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        bodies_tuple = cur.fetchall()
+
+        bodies = []
+
+        # query for all bodies of water that match an id in bodies_tuple
+        for body_id in bodies_tuple:
+            body_id = body_id['body_of_water_id']
+            if body_id is not None:
+                query = f"SELECT * FROM Body_of_water WHERE body_id = {body_id}"
+                cur.execute(query)
+                bodies.append(cur.fetchall()[0])
+
+        return render_template('details.html', title=entity['name'], entity=entity, bodies=bodies)
+
+    return f"{entity}"
 
 
 if __name__ == "__main__":

@@ -30,13 +30,15 @@
     {% for attribute in attributes %}
         {% if attribute == 'location' %}
             {# special case for displaying lat, long - unpack a tuple (lat, long) #}
-            <td>{{ item['latitude'] }}, {{ item['longitude'] }} </td>
+            <td>{{ item['latitude'] }}, {{ item['longitude'] }}</td>
         {% elif '?' in attribute and item[attributes[attribute]] == 1 %}
             {# special case of checking bool: True #}
             <td>True</td>
         {% elif '?' in attribute and item[attributes[attribute]] == 0 %}
             {# special case of checking bool: False #}
             <td>False</td>
+        {% elif 'name' in attribute and location == 'species' %}
+            <td><a href="/{{ location }}/{{ item[attributes['id']] }}">{{ item[attributes[attribute]] }}</a></td>
         {% else %}
             <td>{{ item[attributes[attribute]] }}</td>
         {% endif %}

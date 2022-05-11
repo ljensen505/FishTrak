@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block html_head %}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+{#<p>Entity: {{ entity }}</p>#}
+{#<p>Bodies: {{ bodies }}</p>#}
+
+<table class="table">
+    <tr>
+        <th>Description</th>
+        <th>Locations</th>
+    </tr>
+    <tr>
+        <td>{{ entity['description'] }}</td>
+        <td>
+            <ul class="list-group">
+                {% for body in bodies %}
+                    <a class="list-group-item list-group-item-action" href="/water_bodies/{{ body['name'] }}">{{ body['name'] }}</a>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+</table>
+
+</div>
+
+{% endblock %}
