@@ -626,6 +626,25 @@ def delete_fish(_id):
     return render_template('delete_fish.html', title='Delete Fish', fish=fish, species=SPECIES, str=str)
 
 
+# SPECIES HAS BODY OF WATER INTERSECTION
+@app.route('/<species_id>+<body_id>')
+def insert_intersection(species_id, body_id):
+    """
+    inserts into the intersection table: species_has_body_of_water
+    """
+    # sample query
+    # INSERT INTO Species_has_body_of_water (species_id, body_of_water_id)
+    # VALUES (
+    #         (SELECT species_id FROM Species WHERE name="Largemouth Bass"),
+    #         (SELECT body_id FROM Body_of_water WHERE name="St Mary's Lake")
+    #        );
+
+    query = f"INSERT INTO Species_has_body_of_water (species_id, body_of_water_id)" \
+            f"VALUES ({species_id}, {body_id})"
+
+    return f"{query}"
+
+
 @app.route('/<table>/<_id>')
 def details(table, _id):
     """

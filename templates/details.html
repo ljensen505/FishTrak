@@ -19,6 +19,10 @@
         <td>{{ entity['description'] }}</td>
         <td>
             <ul class="list-group">
+                <a href="/{{ entity['species_id'] }}+{{ 'placeholder' }}"
+                   class="list-group-item list-group-item-action active">
+                    Add + (TODO)
+                </a>
                 {% for body in bodies %}
                     <a class="list-group-item list-group-item-action" href="/water_bodies/{{ body['name'] }}">{{ body['name'] }}</a>
                 {% endfor %}
