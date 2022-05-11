@@ -627,7 +627,6 @@ def delete_fish(_id):
 
 
 # SPECIES HAS BODY OF WATER INTERSECTION
-@app.route('/<species_id>+<body_id>')
 def insert_intersection(species_id, body_id):
     """
     inserts into the intersection table: species_has_body_of_water
@@ -639,48 +638,63 @@ def insert_intersection(species_id, body_id):
     #         (SELECT body_id FROM Body_of_water WHERE name="St Mary's Lake")
     #        );
 
-    query = f"INSERT INTO Species_has_body_of_water (species_id, body_of_water_id)" \
-            f"VALUES ({species_id}, {body_id})"
+    query = "INSERT INTO Species_has_body_of_water (species_id, body_of_water_id)" \
+            "VALUES (%s, %s);"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (species_id, body_id))
+    mysql.connection.commit()
 
-    return f"{query}"
+    print(query)
 
 
-@app.route('/<table>/<_id>')
+@app.route('/<table>/<_id>', methods=['GET', 'POST'])
 def details(table, _id):
     """
     View the details of an attribute
     example: click a body of water and see all fish that appear
     """
+    if request.method == 'POST':
+        body_id = request.form.get('body id')
+        insert_intersection(_id, body_id)
+
+    # ONLY USED FOR SPECIES
     # query to find entity with matching table and id
     query = f"SELECT * FROM {table.title()} WHERE {table}_id = {_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
     entity = cur.fetchall()[0]
 
-    if table == 'species':
-        # view a page that shows details of a given species
-        # sample query:
-        # SELECT * FROM Species_has_body_of_water WHERE species_id = 1;
+    # query for all bodies, to be selected from later
+    query = 'SELECT * FROM Body_of_water'
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    all_bodies = cur.fetchall()
 
-        # query for body_ids
-        query = f"SELECT body_of_water_id FROM Species_has_body_of_water WHERE species_id = {_id}"
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-        bodies_tuple = cur.fetchall()
+    # view a page that shows details of a given species
+    # sample query:
+    # SELECT * FROM Species_has_body_of_water WHERE species_id = 1;
 
-        bodies = []
+    # query for body_ids
+    query = f"SELECT body_of_water_id FROM Species_has_body_of_water WHERE species_id = {_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    bodies_tuple = cur.fetchall()
 
-        # query for all bodies of water that match an id in bodies_tuple
-        for body_id in bodies_tuple:
-            body_id = body_id['body_of_water_id']
-            if body_id is not None:
-                query = f"SELECT * FROM Body_of_water WHERE body_id = {body_id}"
-                cur.execute(query)
-                bodies.append(cur.fetchall()[0])
+    bodies = []
 
-        return render_template('details.html', title=entity['name'], entity=entity, bodies=bodies)
+    # query for all bodies of water that match an id in bodies_tuple
+    for body_id in bodies_tuple:
+        body_id = body_id['body_of_water_id']
+        if body_id is not None:
+            query = f"SELECT * FROM Body_of_water WHERE body_id = {body_id}"
+            cur.execute(query)
+            bodies.append(cur.fetchall()[0])
 
-    return f"{entity}"
+    # used to filter out already associated bodies of water
+    all_body_names = [body['name'] for body in bodies]
+
+    return render_template('details.html', title=entity['name'], entity=entity, bodies=bodies, all_bodies=all_bodies,
+                           all_body_names=all_body_names)
 
 
 if __name__ == "__main__":

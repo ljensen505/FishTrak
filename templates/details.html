@@ -9,6 +9,7 @@
 
 {#<p>Entity: {{ entity }}</p>#}
 {#<p>Bodies: {{ bodies }}</p>#}
+{#<p>All bodies: {{ all_bodies }}</p>#}
 
 <table class="table">
     <tr>
@@ -19,10 +20,20 @@
         <td>{{ entity['description'] }}</td>
         <td>
             <ul class="list-group">
-                <a href="/{{ entity['species_id'] }}+{{ 'placeholder' }}"
-                   class="list-group-item list-group-item-action active">
-                    Add + (TODO)
-                </a>
+                <li class="list-group-item list-group-item-action active">
+                    Add a location:
+                    <form method="post">
+                        <select required class="rounded" name="body id" id="body id">
+                            <option disable selected value=></option>
+                            {% for body in all_bodies %}
+                                {% if body['name'] not in all_body_names %}
+                                <option value="{{ body['body_id'] }}">{{ body['name'] }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-light btn-sm">Add</button>
+                    </form>
+                </li>
                 {% for body in bodies %}
                     <a class="list-group-item list-group-item-action" href="/water_bodies/{{ body['name'] }}">{{ body['name'] }}</a>
                 {% endfor %}
