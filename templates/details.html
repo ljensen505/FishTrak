@@ -8,34 +8,43 @@
 <div class="container">
 
 {#<p>Entity: {{ entity }}</p>#}
-{#<p>Bodies: {{ bodies }}</p>#}
-{#<p>All bodies: {{ all_bodies }}</p>#}
+{#<p>Targets: {{ targets }}</p>#}
+{#<p>All targets: {{ all_targets }}</p>#}
 
 <table class="table">
     <tr>
+        {% if name == 'fish' %}
+        <th>Map</th>
+        <th>{{ name.title() }}es</th>
+        {% else %}
         <th>Description</th>
-        <th>Locations</th>
+        <th>{{ name.title() }}s</th>
+        {% endif %}
     </tr>
     <tr>
+        {% if name =='fish' %}
+        <td><img src="{{ url_for('static', filename='map.png') }}" width="250" alt="Map Placeholder"></td>
+        {% else %}
         <td>{{ entity['description'] }}</td>
+        {% endif %}
         <td>
             <ul class="list-group">
                 <li class="list-group-item list-group-item-action active">
-                    Add a location:
+                    Add a {{ name }}:
                     <form method="post">
-                        <select required class="rounded" name="body id" id="body id">
-                            <option disable selected value=></option>
-                            {% for body in all_bodies %}
-                                {% if body['name'] not in all_body_names %}
-                                <option value="{{ body['body_id'] }}">{{ body['name'] }}</option>
+                        <select required class="rounded" name="target id" id="target id">
+                            <option disabled selected value=></option>
+                            {% for target in all_targets %}
+                                {% if target['name'] not in all_target_names %}
+                                <option value="{{ target[inter_table_id] }}">{{ target['name'] }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
                         <button type="submit" class="btn btn-light btn-sm">Add</button>
                     </form>
                 </li>
-                {% for body in bodies %}
-                    <a class="list-group-item list-group-item-action" href="/water_bodies/{{ body['name'] }}">{{ body['name'] }}</a>
+                {% for target in targets %}
+                    <a class="list-group-item list-group-item-action" href="/find/{{ target_path }}/{{ target['name'] }}">{{ target['name'] }}</a>
                 {% endfor %}
             </ul>
         </td>

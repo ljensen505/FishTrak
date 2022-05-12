@@ -37,7 +37,7 @@
         {% elif '?' in attribute and item[attributes[attribute]] == 0 %}
             {# special case of checking bool: False #}
             <td>False</td>
-        {% elif 'name' in attribute and location == 'species' %}
+        {% elif 'name' in attribute and (location == 'species' or location == 'water_bodies') %}
             <td><a href="/{{ location }}/{{ item[attributes['id']] }}">{{ item[attributes[attribute]] }}</a></td>
         {% else %}
             <td>{{ item[attributes[attribute]] }}</td>

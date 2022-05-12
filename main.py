@@ -261,6 +261,7 @@ def water_bodies(param=None):
 
     if request.method == 'POST' or param:
         # query for search results
+        # param is a possible included search query, if being redirected from elsewhere
         if not param:
             param = request.form.get('search').lower()
         query = f"SELECT * FROM Body_of_water"
@@ -285,9 +286,13 @@ def water_bodies(param=None):
                            attributes=attributes, items=bodies)
 
 
-@app.route('/water_bodies/<name>')
-def find_body(name):
-    return water_bodies(param=name)
+# I think this can be deleted? Time will tell
+@app.route('/find/<table>/<name>')
+def find_body(table, name):
+    if table == 'water_bodies':
+        return water_bodies(param=name)
+    elif table == 'species':
+        return species(param=None)
 
 
 @app.route('/water_bodies/update:<_id>', methods=['GET', 'POST'])
@@ -393,7 +398,7 @@ def add_body():
 
 # SPECIES
 @app.route('/species', methods=['GET', 'POST'])
-def species():
+def species(param=None):
     """The route for displaying all fish species"""
     attributes = {
         'id': 'species_id',
@@ -403,9 +408,11 @@ def species():
         'description': 'description'
     }
 
-    if request.method == 'POST':
+    if request.method == 'POST' or param:
         # query for search parameter
-        param = request.form.get('search').lower()
+        # param is a possible included search query, if being redirected from elsewhere
+        if not param:
+            param = request.form.get('search').lower()
         query = f"SELECT * FROM Species"
         cur = mysql.connection.cursor()
         cur.execute(query)
@@ -631,15 +638,9 @@ def insert_intersection(species_id, body_id):
     """
     inserts into the intersection table: species_has_body_of_water
     """
-    # sample query
-    # INSERT INTO Species_has_body_of_water (species_id, body_of_water_id)
-    # VALUES (
-    #         (SELECT species_id FROM Species WHERE name="Largemouth Bass"),
-    #         (SELECT body_id FROM Body_of_water WHERE name="St Mary's Lake")
-    #        );
-
     query = "INSERT INTO Species_has_body_of_water (species_id, body_of_water_id)" \
             "VALUES (%s, %s);"
+
     cur = mysql.connection.cursor()
     cur.execute(query, (species_id, body_id))
     mysql.connection.commit()
@@ -653,48 +654,74 @@ def details(table, _id):
     View the details of an attribute
     example: click a body of water and see all fish that appear
     """
-    if request.method == 'POST':
-        body_id = request.form.get('body id')
-        insert_intersection(_id, body_id)
+    if table == 'species':
+        target_path = 'water_bodies'
+        table_name = 'Species'
+        target_table_name = 'Body_of_water'
+        table_id = 'species_id'
+        other_table_id = table_id
+        inter_table_id = 'body_id'
+        target_table_id = 'body_of_water_id'
+        name = 'location'
+    elif table == 'water_bodies':
+        target_path = 'species'
+        table_name = 'Body_of_water'
+        target_table_name = 'Species'
+        table_id = 'body_id'
+        # this is a bad idea...
+        other_table_id = 'body_of_water_id'
+        inter_table_id = 'species_id'
+        target_table_id = 'species_id'
+        name = 'fish'
+    else:
+        return "Something has gone wrong. Turn back."
 
-    # ONLY USED FOR SPECIES
+    if request.method == 'POST':
+        target_id = request.form.get('target id')
+        if table == 'species':
+            insert_intersection(_id, target_id)
+        else:
+            insert_intersection(target_id, _id)
+
     # query to find entity with matching table and id
-    query = f"SELECT * FROM {table.title()} WHERE {table}_id = {_id}"
+    query = f"SELECT * FROM {table_name} WHERE {table_id} = {_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
     entity = cur.fetchall()[0]
 
     # query for all bodies, to be selected from later
-    query = 'SELECT * FROM Body_of_water'
+    query = f'SELECT * FROM {target_table_name}'
     cur = mysql.connection.cursor()
     cur.execute(query)
-    all_bodies = cur.fetchall()
+    all_targets = cur.fetchall()
 
     # view a page that shows details of a given species
     # sample query:
     # SELECT * FROM Species_has_body_of_water WHERE species_id = 1;
 
     # query for body_ids
-    query = f"SELECT body_of_water_id FROM Species_has_body_of_water WHERE species_id = {_id}"
+    query = f"SELECT {target_table_id} FROM Species_has_body_of_water WHERE {other_table_id} = {_id}"
+    # return f"{query}"
     cur = mysql.connection.cursor()
     cur.execute(query)
-    bodies_tuple = cur.fetchall()
+    targets_tuple = cur.fetchall()
 
-    bodies = []
+    targets = []
 
     # query for all bodies of water that match an id in bodies_tuple
-    for body_id in bodies_tuple:
-        body_id = body_id['body_of_water_id']
-        if body_id is not None:
-            query = f"SELECT * FROM Body_of_water WHERE body_id = {body_id}"
+    for target_id in targets_tuple:
+        target_id = target_id[target_table_id]
+        if target_id is not None:
+            query = f"SELECT * FROM {target_table_name} WHERE {inter_table_id} = {target_id}"
             cur.execute(query)
-            bodies.append(cur.fetchall()[0])
+            targets.append(cur.fetchall()[0])
 
     # used to filter out already associated bodies of water
-    all_body_names = [body['name'] for body in bodies]
+    all_target_names = [target['name'] for target in targets]
 
-    return render_template('details.html', title=entity['name'], entity=entity, bodies=bodies, all_bodies=all_bodies,
-                           all_body_names=all_body_names)
+    return render_template('details.html', title=entity['name'], entity=entity, targets=targets, name=name,
+                           all_targets=all_targets, all_target_names=all_target_names, target_path=target_path,
+                           inter_table_id=inter_table_id)
 
 
 if __name__ == "__main__":
