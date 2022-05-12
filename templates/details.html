@@ -9,20 +9,20 @@
 
 {#<p>Entity: {{ entity }}</p>#}
 {#<p>Targets: {{ targets }}</p>#}
-{#<p>All targets: {{ all_targets }}</p>#}
+{#<p>All targets: {{ all_targets }}</p>##}
 
 <table class="table">
     <tr>
-        {% if name == 'fish' %}
-        <th>Map</th>
-        <th>{{ name.title() }}es</th>
-        {% else %}
+        {% if name == 'location' %}
         <th>Description</th>
-        <th>{{ name.title() }}s</th>
+        <th>Where to find</th>
+        {% else %}
+        <th>Map</th>
+        <th>Species Found Here</th>
         {% endif %}
     </tr>
     <tr>
-        {% if name =='fish' %}
+        {% if name =='species' %}
         <td><img src="{{ url_for('static', filename='map.png') }}" width="250" alt="Map Placeholder"></td>
         {% else %}
         <td>{{ entity['description'] }}</td>
@@ -44,7 +44,12 @@
                     </form>
                 </li>
                 {% for target in targets %}
-                    <a class="list-group-item list-group-item-action" href="/find/{{ target_path }}/{{ target['name'] }}">{{ target['name'] }}</a>
+                    {% if 'species_id' in target %}
+                        {% set _id = 'species_id' %}
+                    {% else %}
+                        {% set _id = 'body_id' %}
+                    {% endif %}
+                    <a class="list-group-item list-group-item-action" href="/{{ target_path }}/{{ target[_id] }}">{{ target['name'] }}</a>
                 {% endfor %}
             </ul>
         </td>

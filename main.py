@@ -672,7 +672,7 @@ def details(table, _id):
         other_table_id = 'body_of_water_id'
         inter_table_id = 'species_id'
         target_table_id = 'species_id'
-        name = 'fish'
+        name = 'species'
     else:
         return "Something has gone wrong. Turn back."
 
