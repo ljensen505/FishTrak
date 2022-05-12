@@ -1,6 +1,4 @@
-# TODO: Jerrod take over from approx. line 107
-# I may have messed this whole thing up by using actual data. I'm including the original DML file
-# in this same directory as DMLoriginalFromJerrod.sql
+
 
 -- The INSERT ops
 
