@@ -71,31 +71,53 @@ VALUES ((SELECT species_id FROM Species WHERE name = "Trout"),
 -- -----------------------------------------------------
 -- Update Fisherman
 -- -----------------------------------------------------
-UPDATE Fisherman
-SET name = "Lucas" WHERE name = "Tobi";
+new_name = request.form.get('name')
+
+UPDATE Fisherman SET Fisherman.name = %s WHERE fisherman_id={_id}
 
 -- -----------------------------------------------------
 -- Update Lure
 -- -----------------------------------------------------
-UPDATE Lure
-SET name = "Nightcrawler"
-WHERE name = "worm" AND type = "natural";
+new_lure = request.form.get('name')
+weight = request.form.get('weight')
+color = request.form.get('color')
+type = request.form.get('type')
+        
+UPDATE Lure SET Lure.name = %s, Lure.weight = %s, Lure.color = %s, Lure.type = %s WHERE lure_id={_id}
 
 -- -----------------------------------------------------
 -- Update Body_of_water
 -- -----------------------------------------------------
-UPDATE Body_of_water
-SET name = "Pacific"
-WHERE name = "Pacific Ocean" AND latitude = 0 AND longitude = 0;
+name = request.form.get('name')
+        if request.form.get('is_freshwater') == 'on':
+            is_freshwater = 1
+        else:
+            is_freshwater = 0
+        if request.form.get('is_stocked') == 'on':
+            is_stocked = 1
+        else:
+            is_stocked = 0
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
+
+UPDATE Body_of_water SET Body_of_water.name = %s, Body_of_water.is_freshwater = %s, \
+                f"Body_of_water.is_stocked = %s, Body_of_water.latitude = %s, Body_of_water.longitude = %s  \
+                f"WHERE body_id = {_id};"
 
 -- -----------------------------------------------------
 -- Update Species
 -- -----------------------------------------------------
-UPDATE Species
-SET name = "Ahi"
-WHERE name = "Tuna" AND is_freshwater = 0;
-
--- -----------------------------------------------------
+name = request.form.get('name')
+        avg_weight = request.form.get('avg_weight')
+        if 'is_freshwater' in request.form:
+            is_freshwater = 1
+        else:
+            is_freshwater = 0
+        description = request.form.get('description')
+        
+UPDATE Species SET Species.name = %s, Species.avg_weight = %s, Species.description = %s, Species.is_freshwater = %s  \
+                WHERE species_id = {_id}
+ -- -----------------------------------------------------
 -- Update Caught_Fish
 -- -----------------------------------------------------
 UPDATE Caught_fish
@@ -105,37 +127,34 @@ WHERE species_id = (
         );
 
 
-# --- Delete ops
-# TODO: Jerrod take over here
-# TODO: We need to include functional delete and select queries.
-# From Rubric: 1) DML.SQL file has SELECT, INSERT, UPDATE and DELETE queries to meet CS340 Project Guide, 2) JOINs used to make FKs user friendly 3) Variables for back-end code encapsulated by some special characters 4) All queries would run if replaced with actual data. - Excellent quality
+-- Delete Ops
 
 -- -----------------------------------------------------
 -- Delete Fisherman
 -- -----------------------------------------------------
-DELETE FROM Fisherman WHERE name=:delete_angler
+DELETE FROM Fisherman WHERE id=:angler_id
 
 -- -----------------------------------------------------
 -- Delete Lure
 -- -----------------------------------------------------
 
-DELETE FROM Lure WHERE lure=:delete_lure AND lure_weight=:delete_lure_weight AND lure_color=:delete_lure_color
+DELETE FROM Lure WHERE id: = lure_id
 
 -- -----------------------------------------------------
 -- Delete Body_of_water
 -- -----------------------------------------------------
 
-DELETE FROM Body_of_water WHERE name=:delete_body AND latitude=:delete_lat AND longitude=:delete_long
+DELETE FROM Body_of_water WHERE id: = body_id:
 -- -----------------------------------------------------
 -- Delete Species
 -- -----------------------------------------------------
 
-DELETE FROM Species WHERE name=:delete_species
+DELETE FROM Species WHERE id=:species_id
 -- -----------------------------------------------------
 -- Delete Caught_Fish
 -- -----------------------------------------------------
 
-DELETE FROM Caught_Fish WHERE fish_id=:delete_fish_id
+DELETE FROM Caught_Fish WHERE id=:fish_id
 
 ---Select ops
 
@@ -148,12 +167,26 @@ SELECT * FROM Fisherman
 -- -----------------------------------------------------
 -- Select Lure
 -- -----------------------------------------------------
-
-SELECT * FROM Lure
+attributes = {
+        'id': 'lure_id',
+        'name': 'name',
+        'weight': 'weight',
+        'color': 'color',
+        'type': 'type'
+    }
+    
+SELECT lure_id, name, weight, color,type FROM Lure
 -- -----------------------------------------------------
 -- Select Body_of_water
 -- -----------------------------------------------------
-
+attributes = {
+        'id': 'body_id',
+        'name': 'name',
+        'freshwater?': 'is_freshwater',
+        'stocked?': 'is_stocked',
+        'location': ('latitude', 'longitude')
+    }
+    
 SELECT * FROM Body_of_water
 -- -----------------------------------------------------
 -- Select Species
@@ -165,3 +198,26 @@ SELECT * FROM Species
 -- -----------------------------------------------------
 
 SELECT * FROM Caught_Fish
+
+-- -----------------------------------------------------
+-- Search for a Fisherman 
+-- -----------------------------------------------------
+
+ attributes = {
+        'id': 'fisherman_id',
+        'name': 'name'
+    }
+    
+param = request.form.get('search').lower()
+        query = f"SELECT * FROM Fisherman"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        people = [person for person in cur.fetchall() if param in person['name'].lower()]
+        
+        
+-- -----------------------------------------------------
+-- Insert into the MM table Species_has_body_of_water
+-- -----------------------------------------------------
+
+INSERT INTO Species_has_body_of_water (species_id, body_of_water_id)" \
+            "VALUES (%s, %s)
