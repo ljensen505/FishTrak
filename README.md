@@ -28,3 +28,7 @@ Add constaints to add routes
 -- Add statisitcial calculations where needed (for example, calculate average weight of a species using all caught fish of that species)
 
 -- Use DECRIBE query's to dynamically update the database 
+
+-- Add citations, mainly the cs340 provided flask instructions and sample BSG app
+
+-- Add clarity to lure type selection
