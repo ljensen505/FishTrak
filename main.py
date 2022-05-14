@@ -545,22 +545,9 @@ def caught_fish():
     }
 
     if request.method == 'POST':
-
+        # the user is searching
         param = request.form.get('search').lower()
-        query = "SELECT Caught_fish.caught_fish_id AS ID, " \
-                "Species.name AS Species, " \
-                "Body_of_water.name AS Water_Body, " \
-                "Lure.name AS Lure, Fisherman.name AS Angler, " \
-                "Caught_fish.specific_weight AS Weight " \
-                "FROM Caught_fish " \
-                "INNER JOIN Species ON Caught_fish.species_id=Species.species_id " \
-                "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
-                "INNER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
-                "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-
-        caught = [item for item in cur.fetchall() if param in item['Species'].lower()
+        caught = [item for item in retrieve_fish() if param in item['Species'].lower()
                   or param in item['Lure'].lower()
                   or param in item['Water_Body'].lower()
                   or param in item['Angler'].lower()]
@@ -572,25 +559,35 @@ def caught_fish():
         title = 'Caught Fish'
         searching = False
         """print(SPECIES[str(CAUGHT_FISH['1']['species_id'])]['name'])"""
-        query = "SELECT Caught_fish.caught_fish_id AS ID, " \
-                "Species.name AS Species, " \
-                "Body_of_water.name AS Water_Body, " \
-                "Lure.name AS Lure, Fisherman.name AS Angler, " \
-                "Caught_fish.specific_weight AS Weight " \
-                "FROM Caught_fish " \
-                "INNER JOIN Species ON Caught_fish.species_id=Species.species_id " \
-                "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
-                "INNER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
-                "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
-        # print(query)
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-        caught = cur.fetchall()
+        # moved your retrieve query to a function since I needed to duplicate it
+        caught = retrieve_fish()
+        # print(type(caught))
         # print(caught)
 
     # print(SPECIES[CAUGHT_FISH['1']['species_id']])
     return render_template('retrieve.html', title=title, location='caught_fish', items=caught, attributes=attributes,
                            searching=searching)
+
+
+def retrieve_fish() -> tuple:
+    """
+    Performs a query to retrieve all caught fish
+    returns a tuple
+    """
+    query = "SELECT Caught_fish.caught_fish_id AS ID, " \
+            "Species.name AS Species, " \
+            "Body_of_water.name AS Water_Body, " \
+            "Lure.name AS Lure, Fisherman.name AS Angler, " \
+            "Caught_fish.specific_weight AS Weight " \
+            "FROM Caught_fish " \
+            "INNER JOIN Species ON Caught_fish.species_id=Species.species_id " \
+            "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
+            "INNER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
+            "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
+    # print(query)
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    return cur.fetchall()
 
 
 @app.route('/caught_fish/add', methods=['GET', 'POST'])
@@ -675,7 +672,7 @@ def delete_fish(_id):
 
 
 # SPECIES HAS BODY OF WATER INTERSECTION
-def insert_intersection(species_id, body_id):
+def insert_intersection(species_id, body_id) -> None:
     """
     inserts into the intersection table: species_has_body_of_water
     """
@@ -685,8 +682,6 @@ def insert_intersection(species_id, body_id):
     cur = mysql.connection.cursor()
     cur.execute(query, (species_id, body_id))
     mysql.connection.commit()
-
-    print(query)
 
 
 @app.route('/<table>/<_id>', methods=['GET', 'POST'])
