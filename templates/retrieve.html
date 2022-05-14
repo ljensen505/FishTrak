@@ -6,6 +6,7 @@
 {% set title = details['title'] %}
 {% set items = details['items'] %}
 {% set attributes = details['attributes'] %}
+{% set searching = details['searching'] %}
 
 {# finish unpacking #}
 
@@ -66,6 +67,7 @@
     {% endfor %}
     <td><a class="shadow-sm btn btn-outline-info btn-sm" href="/{{ location }}/update:{{ item[attributes['id']] }}">Edit</a></td>
     <td><a class="shadow-sm btn btn-outline-danger btn-sm" href="/{{ location }}/delete:{{ item[attributes['id']] }}">Delete</a></td>
+
   </tr>
   {% endfor %}
 </table>

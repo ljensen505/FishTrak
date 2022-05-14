@@ -41,25 +41,15 @@ def fishermen():
 
     # If the user is searching
     if request.method == 'POST':
-        # query to find the name
         param = request.form.get('search').lower()
-        query = f"SELECT * FROM Fisherman"
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-        people = [person for person in cur.fetchall() if param in person['name'].lower()]
-
-        searching = True
-        title = 'Results'
+        people, searching, title = search(param, 'Fisherman')
 
     else:
         # must be GET request
         query = "SELECT * FROM Fisherman"
         cur = mysql.connection.cursor()
         cur.execute(query)
-        people = cur.fetchall()
-
-        searching = False
-        title = 'Fishermen'
+        people, searching, title = cur.fetchall(), False, 'Fishermen'
 
     # passing page_details to the render function to reduce number of parameters
     page_details = build_details(title, 'fishermen', people, searching, attributes)
@@ -151,26 +141,14 @@ def lures():
     if request.method == 'POST':
         # query to find search results
         param = request.form.get('search').lower()
-        query = f"SELECT * FROM Lure"
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-        lures = [lure for lure in cur.fetchall()
-                 if param in lure['name'].lower()
-                 or param in lure['color'].lower()
-                 or param in lure['type'].lower()]
-
-        searching = True
-        title = 'Results'
+        lures, searching, title = search(param, 'Lure')
 
     else:
         # query to find all lures
         query = "SELECT lure_id, name, weight, color,type FROM Lure"
         cur = mysql.connection.cursor()
         cur.execute(query)
-        lures = cur.fetchall()
-
-        title = 'Lures'
-        searching = False
+        lures, searching, title = cur.fetchall(), False, 'Lures'
 
     page_details = build_details(title, 'lures', lures, searching, attributes)
 
@@ -254,7 +232,7 @@ def add_lure():
 
 # BODIES OF WATER
 @app.route('/water_bodies', methods=['GET', 'POST'])
-def water_bodies(param=None):
+def water_bodies():
     """The route for displaying all bodies of water"""
     attributes = {
         'id': 'body_id',
@@ -264,28 +242,17 @@ def water_bodies(param=None):
         'location': ('latitude', 'longitude')
     }
 
-    if request.method == 'POST' or param:
+    if request.method == 'POST':
         # query for search results
-        # param is a possible included search query, if being redirected from elsewhere
-        if not param:
-            param = request.form.get('search').lower()
-        query = f"SELECT * FROM Body_of_water"
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-        bodies = [body for body in cur.fetchall() if param.lower() in body['name'].lower()]
-
-        searching = True
-        title = 'Results'
+        param = request.form.get('search').lower()
+        bodies, searching, title = search(param, 'Body_of_water')
 
     else:
         # query for everything
         query = "SELECT * FROM Body_of_water"
         cur = mysql.connection.cursor()
         cur.execute(query)
-        bodies = cur.fetchall()
-
-        searching = False
-        title = 'Bodies of Water'
+        bodies, searching, title = cur.fetchall(), False, 'Bodies of Water'
 
     page_details = build_details(title, 'water_bodies', bodies, searching, attributes)
 
@@ -395,7 +362,7 @@ def add_body():
 
 # SPECIES
 @app.route('/species', methods=['GET', 'POST'])
-def species(param=None):
+def species():
     """The route for displaying all fish species"""
     attributes = {
         'id': 'species_id',
@@ -405,30 +372,15 @@ def species(param=None):
         'description': 'description'
     }
 
-    if request.method == 'POST' or param:
-        # query for search parameter
-        # param is a possible included search query, if being redirected from elsewhere
-        if not param:
-            param = request.form.get('search').lower()
-        query = f"SELECT * FROM Species"
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-
-        species = [item for item in cur.fetchall()
-                   if param in item['name'].lower()
-                   or param in item['description'].lower()]
-
-        title = 'Results'
-        searching = True
+    if request.method == 'POST':
+        param = request.form.get('search').lower()
+        species, searching, title = search(param, 'Species')
 
     else:
         query = "SELECT * FROM Species"
         cur = mysql.connection.cursor()
         cur.execute(query)
-        species = cur.fetchall()
-
-        title = 'Species'
-        searching = False
+        species, searching, title = cur.fetchall(), False, 'Species'
 
     page_details = build_details(title, 'species', species, searching, attributes)
 
@@ -545,11 +497,11 @@ def caught_fish():
     if request.method == 'POST':
         # the user is searching
         param = request.form.get('search').lower()
+        # can't use generic search function here because of JOINS
         caught = [item for item in retrieve_fish() if param in item['Species'].lower()
                   or param in item['Lure'].lower()
                   or param in item['Water_Body'].lower()
                   or param in item['Angler'].lower()]
-        # a search is being done by the user or another function
         title = 'Results'
         searching = True
 
@@ -756,6 +708,32 @@ def details(table, _id):
     return render_template('details.html', title=entity['name'], entity=entity, targets=targets, name=name,
                            all_targets=all_targets, all_target_names=all_target_names, target_path=target_path,
                            inter_table_id=inter_table_id, location=table)
+
+
+def search(param: str, table: str) -> tuple:
+    """
+    Searches a given table for a parameter. Does not support JOINS.
+    Returns a tuple
+    """
+    query = f"SELECT * FROM {table}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    items = cur.fetchall()
+    results = []
+
+    for entity in items:
+        for attribute in entity:
+            if param.lower() in str(entity[attribute]).lower():
+                results.append(entity)
+                # found a hit, move to next entity
+                break
+
+    searching = True
+    page_title = 'Results'
+
+    # returning tuple to match cur.fetchall()
+    # returning these three values expedites setting parameters for rendering an html files
+    return tuple(results), searching, page_title
 
 
 def build_details(title: str, location: str, items: tuple, searching: bool, attributes: dict) -> dict:
