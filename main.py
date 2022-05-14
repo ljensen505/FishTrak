@@ -10,6 +10,8 @@ from flask_mysqldb import MySQL
 
 
 app = Flask(__name__)
+# terminal command to auto-restart:
+# FLASK_APP=main.py FLASK_ENV=development flask run
 
 # database connection info
 app.config["MYSQL_HOST"] = os.getenv("HOST")
@@ -59,8 +61,10 @@ def fishermen():
         searching = False
         title = 'Fishermen'
 
-    return render_template('retrieve.html', title=title, location='fishermen', items=people,
-                           attributes=attributes, searching=searching)
+    # passing page_details to the render function to reduce number of parameters
+    page_details = build_details(title, 'fishermen', people, searching, attributes)
+
+    return render_template('retrieve.html', details=page_details)
 
 
 @app.route('/fishermen/add', methods=['GET', 'POST'])
@@ -85,7 +89,7 @@ def add_fisherman():
 
         return redirect('/fishermen')
 
-    return render_template('add.html', title='Add Fisherman', attributes=attributes)
+    return render_template('add.html', title='Add Fisherman', attributes=attributes, location='fishermen')
 
 
 @app.route('/fishermen/update:<_id>', methods=['GET', 'POST'])
@@ -168,8 +172,9 @@ def lures():
         title = 'Lures'
         searching = False
 
-    return render_template('retrieve.html', title=title, location='lures', items=lures, attributes=attributes,
-                           searching=searching)
+    page_details = build_details(title, 'lures', lures, searching, attributes)
+
+    return render_template('retrieve.html', details=page_details)
 
 
 @app.route('/lures/update:<_id>', methods=['GET', 'POST'])
@@ -244,7 +249,7 @@ def add_lure():
         print(f"You added {request.form['name']} to the db! (For real)")
         return redirect('/lures')
 
-    return render_template('add.html', title='Add Lure', attributes=attributes)
+    return render_template('add.html', title='Add Lure', attributes=attributes, location='lures')
 
 
 # BODIES OF WATER
@@ -282,17 +287,9 @@ def water_bodies(param=None):
         searching = False
         title = 'Bodies of Water'
 
-    return render_template('retrieve.html', title=title, location='water_bodies', searching=searching,
-                           attributes=attributes, items=bodies)
+    page_details = build_details(title, 'water_bodies', bodies, searching, attributes)
 
-
-# I think this can be deleted? Time will tell
-@app.route('/find/<table>/<name>')
-def find_body(table, name):
-    if table == 'water_bodies':
-        return water_bodies(param=name)
-    elif table == 'species':
-        return species(param=None)
+    return render_template('retrieve.html', details=page_details)
 
 
 @app.route('/water_bodies/update:<_id>', methods=['GET', 'POST'])
@@ -393,7 +390,7 @@ def add_body():
         mysql.connection.commit()
 
         return redirect('/water_bodies')
-    return render_template('add.html', title='Add Body of Water', attributes=attributes)
+    return render_template('add.html', title='Add Body of Water', attributes=attributes, location='water_bodies')
 
 
 # SPECIES
@@ -433,8 +430,9 @@ def species(param=None):
         title = 'Species'
         searching = False
 
-    return render_template('retrieve.html', title=title, location='species', items=species, attributes=attributes,
-                           searching=searching)
+    page_details = build_details(title, 'species', species, searching, attributes)
+
+    return render_template('retrieve.html', details=page_details)
 
 
 @app.route('/species/update:<_id>', methods=['GET', 'POST'])
@@ -506,7 +504,7 @@ def add_species():
         {'name': 'Name', 'type': 'text', 'required': 'required'},
         {'name': 'Avg Weight', 'type': 'number', 'required': 'required'},
         {'name': 'Freshwater', 'type': 'checkbox'},
-        {'name': 'Description', 'type': 'text'}
+        {'name': 'Description', 'type': 'text', 'maxlength': 150}
     ]
 
     if request.method == 'POST':
@@ -528,7 +526,7 @@ def add_species():
 
         return redirect('/species')
 
-    return render_template('add.html', title='Add Species', attributes=attributes)
+    return render_template('add.html', title='Add Species', attributes=attributes, location='species')
 
 
 # CAUGHT_FISH
@@ -564,9 +562,9 @@ def caught_fish():
         # print(type(caught))
         # print(caught)
 
-    # print(SPECIES[CAUGHT_FISH['1']['species_id']])
-    return render_template('retrieve.html', title=title, location='caught_fish', items=caught, attributes=attributes,
-                           searching=searching)
+    page_details = build_details(title, 'caught_fish', caught, searching, attributes)
+
+    return render_template('retrieve.html', details=page_details)
 
 
 def retrieve_fish() -> tuple:
@@ -638,7 +636,7 @@ def add_fish():
         print(f"You added a fish to the db! (I think?)")
         return redirect('/caught_fish')
     return render_template('add_fish.html', title='Add Fish', species=species, bodies=bodies, lures=lures,
-                           fishermen=fishermen)
+                           fishermen=fishermen, location='caught_fish')
 
 
 @app.route('/caught_fish/update:<_id>', methods=['GET', 'POST'])
@@ -757,7 +755,20 @@ def details(table, _id):
 
     return render_template('details.html', title=entity['name'], entity=entity, targets=targets, name=name,
                            all_targets=all_targets, all_target_names=all_target_names, target_path=target_path,
-                           inter_table_id=inter_table_id)
+                           inter_table_id=inter_table_id, location=table)
+
+
+def build_details(title: str, location: str, items: tuple, searching: bool, attributes: dict) -> dict:
+    """
+    Builds and returns a dictionary of details needed to render a Retrieve template
+    """
+    return {
+        'title': title,
+        'location': location,
+        'items': items,
+        'searching': searching,
+        'attributes': attributes
+    }
 
 
 if __name__ == "__main__":

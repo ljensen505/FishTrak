@@ -1,4 +1,14 @@
 {% extends "base.html" %}
+
+{# unpack dictionary #}
+
+{% set location = details['location'] %}
+{% set title = details['title'] %}
+{% set items = details['items'] %}
+{% set attributes = details['attributes'] %}
+
+{# finish unpacking #}
+
 {% block title %}{{ title }}{% endblock %}
 
 {% block html_head %}{% endblock %}
@@ -17,6 +27,7 @@
 </div>
 
 {# helpful for debugging #}
+
 {#<p>Items: {{ items }}</p>#}
 {#<p>Attributes: {{ attributes }}</p>#}
 
@@ -42,6 +53,9 @@
             <td>False</td>
         {% elif 'name' in attribute and (location == 'species' or location == 'water_bodies') %}
             <td><a href="/{{ location }}/{{ item[attributes['id']] }}">{{ item[attributes[attribute]] }}</a></td>
+        {% elif attribute == 'description' and item[attributes[attribute]]|length > 40 %}
+            {# only display segment of a very long description #}
+            <td>{{ item[attributes[attribute]][:40] }} <a href="/{{ location }}/{{ item[attributes['id']] }}">[...]</a></td>
         {% else %}
             {% if item[attributes[attribute]] != None %}
                 <td>{{ item[attributes[attribute]] }}</td>

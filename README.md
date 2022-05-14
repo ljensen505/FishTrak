@@ -32,3 +32,9 @@ Add constaints to add routes
 -- Add citations, mainly the cs340 provided flask instructions and sample BSG app
 
 -- Add clarity to lure type selection
+
+-- refactor update pages to use same template, if possible
+
+-- consolidate Update render parameters
+
+-- fix navbar highlighting for update
