@@ -15,8 +15,11 @@
     </span>
 </form>
 </div>
+
+{# helpful for debugging #}
 {#<p>Items: {{ items }}</p>#}
 {#<p>Attributes: {{ attributes }}</p>#}
+
 <table class="table table-hover">
 <tr>
     {% for attribute in attributes %}
@@ -28,7 +31,7 @@
   {% for item in items %}
   <tr>
     {% for attribute in attributes %}
-        {% if attribute == 'location' %}
+        {% if attribute == 'location' and location !='caught_fish' %}
             {# special case for displaying lat, long - unpack a tuple (lat, long) #}
             <td>{{ item['latitude'] }}, {{ item['longitude'] }}</td>
         {% elif '?' in attribute and item[attributes[attribute]] == 1 %}
@@ -40,7 +43,11 @@
         {% elif 'name' in attribute and (location == 'species' or location == 'water_bodies') %}
             <td><a href="/{{ location }}/{{ item[attributes['id']] }}">{{ item[attributes[attribute]] }}</a></td>
         {% else %}
-            <td>{{ item[attributes[attribute]] }}</td>
+            {% if item[attributes[attribute]] != None %}
+                <td>{{ item[attributes[attribute]] }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
         {% endif %}
     {% endfor %}
     <td><a class="shadow-sm btn btn-outline-info btn-sm" href="/{{ location }}/update:{{ item[attributes['id']] }}">Edit</a></td>

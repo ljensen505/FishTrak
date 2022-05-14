@@ -532,24 +532,65 @@ def add_species():
 
 
 # CAUGHT_FISH
-@app.route('/caught_fish')
+@app.route('/caught_fish', methods=['GET', 'POST'])
 def caught_fish():
     """The route for displaying all caught fish"""
-    """print(SPECIES[str(CAUGHT_FISH['1']['species_id'])]['name'])"""
-    query = "SELECT Caught_fish.caught_fish_id AS ID, Species.name AS Species, Body_of_water.name AS Water_Body, Lure.name AS Lure, Fisherman.name AS Angler, Caught_fish.specific_weight AS Weight " \
-            "FROM Caught_fish " \
-            "INNER JOIN Species ON Caught_fish.species_id=Species.species_id " \
-            "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
-            "INNER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
-            "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
-    print(query)
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    caught = cur.fetchall()
-    print(caught)
+    attributes = {
+        'id': 'ID',
+        'species': 'Species',
+        'location': 'Water_Body',
+        'lure': 'Lure',
+        'caught by': 'Angler',
+        'weight': 'Weight'
+    }
+
+    if request.method == 'POST':
+
+        param = request.form.get('search').lower()
+        query = "SELECT Caught_fish.caught_fish_id AS ID, " \
+                "Species.name AS Species, " \
+                "Body_of_water.name AS Water_Body, " \
+                "Lure.name AS Lure, Fisherman.name AS Angler, " \
+                "Caught_fish.specific_weight AS Weight " \
+                "FROM Caught_fish " \
+                "INNER JOIN Species ON Caught_fish.species_id=Species.species_id " \
+                "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
+                "INNER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
+                "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+
+        caught = [item for item in cur.fetchall() if param in item['Species'].lower()
+                  or param in item['Lure'].lower()
+                  or param in item['Water_Body'].lower()
+                  or param in item['Angler'].lower()]
+        # a search is being done by the user or another function
+        title = 'Results'
+        searching = True
+
+    else:
+        title = 'Caught Fish'
+        searching = False
+        """print(SPECIES[str(CAUGHT_FISH['1']['species_id'])]['name'])"""
+        query = "SELECT Caught_fish.caught_fish_id AS ID, " \
+                "Species.name AS Species, " \
+                "Body_of_water.name AS Water_Body, " \
+                "Lure.name AS Lure, Fisherman.name AS Angler, " \
+                "Caught_fish.specific_weight AS Weight " \
+                "FROM Caught_fish " \
+                "INNER JOIN Species ON Caught_fish.species_id=Species.species_id " \
+                "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
+                "INNER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
+                "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
+        # print(query)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        caught = cur.fetchall()
+        # print(caught)
 
     # print(SPECIES[CAUGHT_FISH['1']['species_id']])
-    return render_template('caught_fish.html', title='Caught Fish', fishes=caught)
+    return render_template('retrieve.html', title=title, location='caught_fish', items=caught, attributes=attributes,
+                           searching=searching)
 
 
 @app.route('/caught_fish/add', methods=['GET', 'POST'])
@@ -623,14 +664,14 @@ def update_fish(_id):
 def delete_fish(_id):
     """
     Deletes a specified caught_fish
-    This is a template and does not delete anything yet
     """
-    fish = CAUGHT_FISH[_id]
+    # query to delete a species
+    query = "DELETE FROM Caught_fish WHERE caught_fish_id = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (_id,))
+    mysql.connection.commit()
 
-    if request.method == 'POST':
-        return redirect('/caught_fish')
-
-    return render_template('delete_fish.html', title='Delete Fish', fish=fish, species=SPECIES, str=str)
+    return redirect('/caught_fish')
 
 
 # SPECIES HAS BODY OF WATER INTERSECTION
