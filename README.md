@@ -38,3 +38,5 @@ Add constaints to add routes
 -- consolidate Update render parameters
 
 -- fix navbar highlighting for update
+
+-- install bootstrap 5 icons: https://icons.getbootstrap.com/#install
