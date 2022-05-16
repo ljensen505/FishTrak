@@ -10,6 +10,7 @@ Implement Client side for an actual user:
 -- Arrange tables to reflect what one user would see (just there fish and attributes)
 
 -- A profile page, detailing pertinent information (might inlcude pciture, location, fish count, species count)
+-- Maybe fish count could be represented with rendering n fish [icons in a row](https://en.wikipedia.org/wiki/Victory_marking), where n is how many fish the fisherman has caught?
 
 -- Oauth and login servicing 
 
@@ -23,7 +24,8 @@ Add constaints to add routes
 
 -- Create types for int inputs like weight for a fish (Ounce, lb, etc)
 
--- Eliminate redundant data entry (can add the same species twice)
+-- ~~Eliminate redundant data entry (can add the same species twice)~~
+-- Add show an error message to user when trying to add redundant data. Need flash or modal (or similar)
 
 -- Add statisitcial calculations where needed (for example, calculate average weight of a species using all caught fish of that species)
 
@@ -37,6 +39,6 @@ Add constaints to add routes
 
 -- consolidate Update render parameters
 
--- fix navbar highlighting for update
+~~-- fix navbar highlighting for update~~
 
--- install bootstrap 5 icons: https://icons.getbootstrap.com/#install
+-- ~~install bootstrap 5 icons: https://icons.getbootstrap.com/#install~~

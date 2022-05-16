@@ -49,7 +49,10 @@
                     {% else %}
                         {% set _id = 'body_id' %}
                     {% endif %}
-                    <a class="list-group-item list-group-item-action" href="/{{ target_path }}/{{ target[_id] }}">{{ target['name'] }}</a>
+                    <a class="list-group-item list-group-item-action"
+                        href="/{{ target_path }}/{{ target[_id] }}">{{ target['name'] }}
+                        <i style="float: right" class="bi bi-trash3 text-danger"></i>
+                    </a>
                 {% endfor %}
             </ul>
         </td>
