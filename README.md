@@ -29,7 +29,7 @@ Add constaints to add routes
 
 -- Use DECRIBE query's to dynamically update the database 
 
--- Add citations, mainly the cs340 provided flask instructions and sample BSG app
+-- ~~Add citations, mainly the cs340 provided flask instructions and sample BSG app~~
 
 -- Add clarity to lure type selection
 
