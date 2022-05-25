@@ -7,6 +7,7 @@ import os
 from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
+from pprint import pprint
 
 """
 CITATIONS:
@@ -113,7 +114,7 @@ def update_fisherman(_id):
         # redirect to all fishermen
         return redirect('/fishermen')
 
-    return render_template('update_fisherman.html', title='Update Fisherman', person=person)
+    return render_template('update_fisherman.html', title='Update Fisherman', person=person, location='fishermen')
 
 
 @app.route('/fishermen/delete:<_id>', methods=['GET', 'POST'])
@@ -186,7 +187,7 @@ def update_lure(_id):
         mysql.connection.commit()
         return redirect('/lures')
 
-    return render_template('update_lure.html', title='Update Lure', lure=lure)
+    return render_template('update_lure.html', title='Update Lure', lure=lure, location='lures')
 
 
 @app.route('/lures/delete:<_id>', methods=['GET', 'POST'])
@@ -301,7 +302,7 @@ def update_body(_id):
         # redirect to all water bodies
         return redirect('/water_bodies')
 
-    return render_template('update_body.html', title='Update Body', body=body)
+    return render_template('update_body.html', title='Update Body', body=body, location='water_bodies')
 
 
 @app.route('/water_bodies/delete:<_id>', methods=['GET', 'POST'])
@@ -343,6 +344,19 @@ def add_body():
     ]
 
     if request.method == 'POST':
+        # build list of all species to check new species name against
+        all_bodies = search("", 'Body_of_water')[0]
+        # all_bodies is a list of all species names in lowercase
+        all_bodies = [body['name'].lower() for body in all_bodies]
+
+        # gather data from the form
+        name = request.form.get('name')
+
+        # check if name already exists, if yes redirect to Bodies page with no action
+        # TODO: Add message to user about the error
+        if name.lower() in all_bodies:
+            return redirect('/water_bodies')
+
         # gather data from the form
         name = request.form.get('name')
         if 'freshwater' in request.form:
@@ -427,7 +441,7 @@ def update_species(_id):
         # redirect to all species
         return redirect('/species')
 
-    return render_template('update_species.html', title='Update Species', fish=fish)
+    return render_template('update_species.html', title='Update Species', fish=fish, location='species')
 
 
 @app.route('/species/delete:<_id>', methods=['GET', 'POST'])
@@ -467,8 +481,19 @@ def add_species():
     ]
 
     if request.method == 'POST':
+        # build list of all species to check new species name against
+        all_species = search("", 'Species')[0]
+        # all_species is a list of all species names in lowercase
+        all_species = [species['name'].lower() for species in all_species]
+
         # gather data from the form
         name = request.form.get('name')
+
+        # check if name already exists, if yes redirect to Species page with no action
+        # TODO: Add message to user about the error
+        if name.lower() in all_species:
+            return redirect('/species')
+
         avg_weight = request.form.get('avg weight')
         if 'freshwater' in request.form:
             is_freshwater = 1
@@ -611,7 +636,7 @@ def update_fish(_id):
         return redirect('/caught_fish')
 
     return render_template('/update_fish.html', title='Update Fish', species=SPECIES, bodies=BODIES_OF_WATER,
-                           lures=LURES, fishermen=FISHERMEN, curr_fish=fish, str=str)
+                           lures=LURES, fishermen=FISHERMEN, curr_fish=fish, str=str, location='caught_fish')
 
 
 @app.route('/caught_fish/delete:<_id>', methods=['GET', 'POST'])
