@@ -8,6 +8,13 @@ from flask import Flask, render_template, request, redirect
 from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
 
+"""
+CITATIONS:
+The general structure of this program is based on the CS340 provided sample Flask App.
+Our references to it have been ongoing through the term
+https://github.com/osu-cs340-ecampus/flask-starter-app
+"""
+
 
 app = Flask(__name__)
 # terminal command to auto-restart:
@@ -715,6 +722,12 @@ def search(param: str, table: str) -> tuple:
     Searches a given table for a parameter. Does not support JOINS.
     Returns a tuple
     """
+    # Citation for the following function:
+    # This way of making a query with flask is reused throughout this file. All are based on the same source material.
+    # Date: 5/01/22
+    # Adapted from:
+    # https://github.com/osu-cs340-ecampus/flask-starter-app
+
     query = f"SELECT * FROM {table}"
     cur = mysql.connection.cursor()
     cur.execute(query)
