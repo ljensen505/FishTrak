@@ -664,9 +664,23 @@ def insert_intersection(species_id, body_id) -> None:
     cur = mysql.connection.cursor()
     cur.execute(query, (species_id, body_id))
     mysql.connection.commit()
+    print("ran delete query")
 
 
-@app.route('/<table>/<_id>', methods=['GET', 'POST'])
+def delete_intersection(species_id: int, body_id: int) -> None:
+    """
+    Deletes from the intersection table: species_has_body_of_water
+    IDs for each side of the M:M relationship must be specified
+    """
+    query = "DELETE FROM Species_has_body_of_water " \
+            "WHERE species_id = %s and body_of_water_id = %s;"
+
+    cur = mysql.connection.cursor()
+    cur.execute(query, (species_id, body_id))
+    mysql.connection.commit()
+
+
+@app.route('/<table>/<_id>', methods=['GET', 'POST', 'DELETE'])
 def details(table, _id):
     """
     View the details of an attribute
@@ -695,11 +709,22 @@ def details(table, _id):
         return "Something has gone wrong. Turn back."
 
     if request.method == 'POST':
-        target_id = request.form.get('target id')
-        if table == 'species':
-            insert_intersection(_id, target_id)
-        else:
-            insert_intersection(target_id, _id)
+        if 'add form' in request.form:
+            # process add form
+            target_id = request.form.get('target id')
+            if table == 'species':
+                insert_intersection(_id, target_id)
+            else:
+                insert_intersection(target_id, _id)
+        elif 'delete form' in request.form:
+            # process delete form
+            if table == 'species':
+                body_id = int(request.form.get('target id'))
+                species_id = _id
+            else:
+                species_id = int(request.form.get('target id'))
+                body_id = _id
+            delete_intersection(species_id, body_id)
 
     # query to find entity with matching table and id
     query = f"SELECT * FROM {table_name} WHERE {table_id} = {_id}"
@@ -714,12 +739,8 @@ def details(table, _id):
     all_targets = cur.fetchall()
 
     # view a page that shows details of a given species
-    # sample query:
-    # SELECT * FROM Species_has_body_of_water WHERE species_id = 1;
-
     # query for body_ids
     query = f"SELECT {target_table_id} FROM Species_has_body_of_water WHERE {other_table_id} = {_id}"
-    # return f"{query}"
     cur = mysql.connection.cursor()
     cur.execute(query)
     targets_tuple = cur.fetchall()
