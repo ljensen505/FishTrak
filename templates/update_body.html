@@ -9,8 +9,6 @@
 
 <div class="container">
 
-    <p>{{ body }}</p>
-
     <form method="post">
         <table class="table">
             <tr>
@@ -35,11 +33,11 @@
             </tr>
             <tr>
                 <td><label for="latitude">Latitude</label></td>
-                <td><input id="latitude" name="latitude" type="number" step="any" value="{{ body['latitude'] }}"></td>
+                <td><input required id="latitude" name="latitude" type="number" step="any" value="{{ body['latitude'] }}"></td>
             </tr>
             <tr>
                 <td><label for="longitude">Longitude</label></td>
-                <td><input id="longitude" name="longitude" type="number" step="any" value="{{ body['longitude'] }}"></td>
+                <td><input required id="longitude" name="longitude" type="number" step="any" value="{{ body['longitude'] }}"></td>
             </tr>
         </table>
 
