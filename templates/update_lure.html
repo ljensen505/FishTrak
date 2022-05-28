@@ -7,6 +7,8 @@
 
 {% block content %}
 
+{{ lure }}
+
 <div class="container">
 
     <form method="post">
@@ -17,7 +19,7 @@
             </tr>
             <tr>
                 <td><label for="weight">Weight:</label></td>
-                <td><input id="weight" name="weight" required type="number" value="{{ lure['weight'] }}"></td>
+                <td><input step="any" id="weight" name="weight" required type="number" value="{{ lure['weight'] }}"></td>
             </tr>
             <tr>
                 <td><label for="color">Color:</label></td>

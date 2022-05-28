@@ -169,10 +169,10 @@ def update_lure(_id):
     updates a specified lure
     """
     # TODO: This is broken
-    query = f"SELECT lure_id FROM Lure WHERE lure_id={_id}"
+    query = f"SELECT * FROM Lure WHERE lure_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
-    lure = cur.fetchall()
+    lure = cur.fetchall()[0]
 
     if request.method == 'POST':
         new_lure = request.form.get('name')
