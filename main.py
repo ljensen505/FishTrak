@@ -605,7 +605,7 @@ def add_fish():
         weight = request.form.get('weight')
 
         # TODO: Make functional with ' in lake names and others (St Mary's lake is troubesome), add branching for NULL vals in Lure
-        # query to get insert new body of water
+        # query to get insert new caught fish
         query = f"INSERT INTO Caught_fish (species_id, body_of_water_id, lure_id, fisherman_id, specific_weight) \
         VALUES ((SELECT species_id FROM Species WHERE name = '{species}'), \
         (SELECT body_id FROM Body_of_water WHERE name = '{location}'), \
@@ -629,14 +629,81 @@ def update_fish(_id):
     updates a specified caught fish
     This is a template and does not update anything
     """
-    # TODO: this html file for this route needs some additional logic to handle default values for lure and caught_by
-    fish = CAUGHT_FISH[_id]
+
+    """# query for species using ID
+    query = f"SELECT * FROM Species WHERE species_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    fish = cur.fetchall()[0]
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        avg_weight = request.form.get('avg_weight')
+        if 'is_freshwater' in request.form:
+            is_freshwater = 1
+        else:
+            is_freshwater = 0
+        description = request.form.get('description')
+
+        # update query
+        query = f"UPDATE Species " \
+                f"SET Species.name = %s, Species.avg_weight = %s, Species.description = %s, Species.is_freshwater = %s " \
+                f"WHERE species_id = {_id};"
+        print(query)
+        cur = mysql.connection.cursor()
+        cur.execute(query, (name, avg_weight, description, is_freshwater))
+        mysql.connection.commit()
+
+        # redirect to all species
+        return redirect('/species')
+
+    return render_template('update_species.html', title='Update Species', fish=fish, location='species')"""
+
+    #TODO: Since both add and update use this big block of queries to grab all data for drop do
+    query = "SELECT * FROM Species"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    species = cur.fetchall()
+    print(species)
+
+    query = "SELECT * FROM Lure"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    lures = cur.fetchall()
+    print(lures)
+
+    query = "SELECT * FROM Body_of_water"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    bodies = cur.fetchall()
+    print(bodies)
+
+    query = "SELECT * FROM Fisherman"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    fishermen = cur.fetchall()
+    print(fishermen)
+
+    query = f"SELECT * FROM Caught_fish WHERE caught_fish_id={_id}"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    curr_fish = cur.fetchall()
+    print(curr_fish)
+
+    print(curr_fish[0]['species_id'])
+
+
+    # TODO: the html file for this route needs some additional logic to handle default values for lure and caught_by
+    fish = _id
+    name = request.form.get('name')
+    print(fish)
+    print(name)
 
     if request.method == 'POST':
         return redirect('/caught_fish')
 
-    return render_template('/update_fish.html', title='Update Fish', species=SPECIES, bodies=BODIES_OF_WATER,
-                           lures=LURES, fishermen=FISHERMEN, curr_fish=fish, str=str, location='caught_fish')
+    return render_template('/update_fish.html', title='Update Fish', species=species, bodies=bodies,
+                           lures=lures, fishermen=fishermen, curr_fish=curr_fish[0], str=str, location='caught_fish')
 
 
 @app.route('/caught_fish/delete:<_id>', methods=['GET', 'POST'])

@@ -18,10 +18,10 @@
                 <td>
                     <select required name="species" id="species">
                         {% for fish in species %}
-                            {% if species[fish]['name'] == species[str(curr_fish['species_id'])]['name'] %}
-                                <option selected value="{{ species[fish]['name'] }}">{{ species[fish]['name'] }}</option>
+                            {% if fish['species_id'] == curr_fish['species_id'] %}
+                                <option selected value="{{ fish['name'] }}">{{ fish['name'] }}</option>
                             {% else %}
-                                <option value="{{ species[fish]['name'] }}">{{ species[fish]['name'] }}</option>
+                                <option value="{{ fish['name'] }}">{{ fish['name'] }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>
@@ -32,10 +32,10 @@
                 <td>
                     <select required name="location" id="location">
                         {% for body in bodies %}
-                            {% if bodies[body]['name'] == bodies[str(curr_fish['body_of_water_id'])]['name'] %}
-                                <option selected name="{{ bodies[body]['name'] }}" value="{{ bodies[body]['name'] }}">{{ bodies[body]['name'] }}</option>
+                            {% if body['body_id'] == curr_fish['body_of_water_id'] %}
+                                <option selected name="{{ body['name'] }}" value="{{ body['name'] }}">{{ body['name'] }}</option>
                             {% else %}
-                                <option name="{{ bodies[body]['name'] }}" value="{{ bodies[body]['name'] }}">{{ bodies[body]['name'] }}</option>
+                                <option name="{{ body['name'] }}" value="{{ body['name'] }}">{{ body['name'] }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>
@@ -47,9 +47,11 @@
                     <select name="lure" id="lure">
                         <option selected value=></option>
                         {% for lure in lures %}
-
-                            <option value=>{{ lures[lure]['name'] }}</option>
-
+                            {% if lure['lure_id'] == curr_fish['lure_id'] %}
+                                <option selected name="{{ lure['name'] }}" value="{{ lure['name'] }}">{{ lure['name'] }}</option>
+                            {% else %}
+                                <option name="{{ lure['name'] }}" value="{{ lure['name'] }}">{{ lure['name'] }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </td>
@@ -59,18 +61,19 @@
                 <td>
                     <select name="fisherman" id="fisherman">
                         <option selected value=></option>
-
                         {% for fisherman in fishermen %}
-
-                            <option value=>{{ fishermen[fisherman]['name'] }}</option>
-
+                            {% if fisherman['fisherman_id'] == curr_fish['fisherman_id'] %}
+                                <option selected name="{{ fisherman['name'] }}" value="{{ fisherman['name'] }}">{{ fisherman['name'] }}</option>
+                            {% else %}
+                                <option name="{{ fisherman['name'] }}" value="{{ fisherman['name'] }}">{{ fisherman['name'] }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </td>
             </tr>
             <tr>
                 <td><label for="weight">Weight:</label></td>
-                <td><input name="weight" id="weight" type="number" value="{{ curr_fish['weight'] }}"></td>
+                <td><input name="weight" id="weight" type="number" selected value="{{ curr_fish['specific_weight'] }}"></td>
             </tr>
         </table>
         <button type="submit" class="btn btn-primary btn-sm">Update</button>
