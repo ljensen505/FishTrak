@@ -168,7 +168,6 @@ def update_lure(_id):
     """
     updates a specified lure
     """
-    # TODO: This is broken
     query = f"SELECT * FROM Lure WHERE lure_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
