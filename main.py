@@ -168,10 +168,11 @@ def update_lure(_id):
     """
     updates a specified lure
     """
-    query = f"SELECT * FROM Lure WHERE lure_id={_id}"
+    # TODO: This is broken
+    query = f"SELECT lure_id FROM Lure WHERE lure_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
-    lure = cur.fetchall()[0]
+    lure = cur.fetchall()
 
     if request.method == 'POST':
         new_lure = request.form.get('name')
@@ -689,16 +690,70 @@ def update_fish(_id):
     curr_fish = cur.fetchall()
     print(curr_fish)
 
-    print(curr_fish[0]['species_id'])
-
-
     # TODO: the html file for this route needs some additional logic to handle default values for lure and caught_by
     fish = _id
     name = request.form.get('name')
-    print(fish)
-    print(name)
 
     if request.method == 'POST':
+        # Since caught_fish use keys, parse the table vars to get associated keys to update the fish
+        # First, get the requested updates that the user would like
+        feesh_species = request.form.get('species')
+        print(feesh_species)
+        water_body = request.form.get('location')
+        lure = request.form.get('lure')
+        fisherman_form = request.form.get('fisherman')
+        weight = request.form.get('weight')
+        #TODO: Make this faster and less ugly
+        # Then, hideously iterate through each value in the evil tuple dict to pull out the id keys we need
+        counter = 0
+        iter_species = species[0]['name']
+        while iter_species != feesh_species:
+            counter += 1
+            iter_species = species[counter]['name']
+        species_id = species[counter]['species_id']
+        print(species_id)
+
+        counter = 0
+        iter_body = bodies[0]['name']
+        while iter_body != water_body:
+            counter += 1
+            iter_body = bodies[counter]['name']
+        body_id = bodies[counter]['body_id']
+        print(body_id)
+
+        counter = 0
+        iter_lure = lures[0]['name']
+        while iter_lure != lure:
+            counter += 1
+            iter_lure = lures[counter]['name']
+        lure_id = lures[counter]['lure_id']
+        print(lure_id)
+
+        counter = 0
+        iter_lure = lures[0]['name']
+        while iter_lure != lure:
+            counter += 1
+            iter_lure = lures[counter]['name']
+        lure_id = lures[counter]['lure_id']
+        print(lure_id)
+
+        counter = 0
+        iter_fisherman = fishermen[0]['name']
+        while iter_fisherman != fisherman_form:
+            counter += 1
+            iter_fisherman = fishermen[counter]['name']
+        fisherman_id = fishermen[counter]['fisherman_id']
+        print(fisherman_id)
+
+        query = f"UPDATE Caught_fish " \
+                f"SET Caught_fish.species_id = %s, Caught_fish.body_of_water_id = %s, Caught_fish.lure_id = %s, Caught_fish.fisherman_id = %s, Caught_fish.specific_weight = %s" \
+                f"WHERE caught_fish_id = {_id};"
+        print(query)
+        cur = mysql.connection.cursor()
+        cur.execute(query, (species_id, body_id, lure_id, fisherman_id, weight))
+        mysql.connection.commit()
+
+
         return redirect('/caught_fish')
 
     return render_template('/update_fish.html', title='Update Fish', species=species, bodies=bodies,
