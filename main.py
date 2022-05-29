@@ -599,9 +599,13 @@ def add_fish():
 
     if request.method == 'POST':
         species = request.form.get('species')
+        print(species)
         location = request.form.get('location')
+        print(location)
         lure = request.form.get('lure')
+        print(lure)
         angler = request.form.get('fisherman')
+        print(angler)
         weight = request.form.get('weight')
 
         # TODO: Make functional with ' in lake names and others (St Mary's lake is troubesome), add branching for NULL vals in Lure
@@ -617,6 +621,12 @@ def add_fish():
         print(cur.execute(query))
         mysql.connection.commit()
 
+        query = f"SELECT * FROM Caught_fish"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        curr_fish = cur.fetchall()
+        print(curr_fish)
+
         print(f"You added a fish to the db! (I think?)")
         return redirect('/caught_fish')
     return render_template('add_fish.html', title='Add Fish', species=species, bodies=bodies, lures=lures,
@@ -629,36 +639,6 @@ def update_fish(_id):
     updates a specified caught fish
     This is a template and does not update anything
     """
-
-    """# query for species using ID
-    query = f"SELECT * FROM Species WHERE species_id={_id}"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    fish = cur.fetchall()[0]
-
-    if request.method == 'POST':
-        name = request.form.get('name')
-        avg_weight = request.form.get('avg_weight')
-        if 'is_freshwater' in request.form:
-            is_freshwater = 1
-        else:
-            is_freshwater = 0
-        description = request.form.get('description')
-
-        # update query
-        query = f"UPDATE Species " \
-                f"SET Species.name = %s, Species.avg_weight = %s, Species.description = %s, Species.is_freshwater = %s " \
-                f"WHERE species_id = {_id};"
-        print(query)
-        cur = mysql.connection.cursor()
-        cur.execute(query, (name, avg_weight, description, is_freshwater))
-        mysql.connection.commit()
-
-        # redirect to all species
-        return redirect('/species')
-
-    return render_template('update_species.html', title='Update Species', fish=fish, location='species')"""
-
     #TODO: Since both add and update use this big block of queries to grab all data for drop do
     query = "SELECT * FROM Species"
     cur = mysql.connection.cursor()

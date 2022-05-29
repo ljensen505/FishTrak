@@ -19,7 +19,7 @@
             </tr>
             <tr>
                 <td><label for="weight">Weight:</label></td>
-                <td><input step="any" id="weight" name="weight" required type="number" value="{{ lure['weight'] }}"></td>
+                <td><input step="any" id="weight" name="weight" required type="number" min="0" value="{{ lure['weight'] }}"></td>
             </tr>
             <tr>
                 <td><label for="color">Color:</label></td>
@@ -27,7 +27,7 @@
             </tr>
             <tr>
                 <td><label for="type">Type:</label></td>
-                <td><input id="type" name="type" required type="text" value="{{ lure['type'] }}"></td>
+                <td><input id="type" name="type" required type="text" value="{{ lure['Type'] }}"></td>
             </tr>
         </table>
 

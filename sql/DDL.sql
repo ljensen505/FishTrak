@@ -28,15 +28,15 @@ CREATE TABLE IF NOT EXISTS Caught_fish (
   FOREIGN KEY (species_id)
     REFERENCES Species (species_id)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION,
+    ON UPDATE CASCADE,
   FOREIGN KEY (lure_id)
     REFERENCES Lure (lure_id)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION,
+    ON UPDATE CASCADE,
   FOREIGN KEY (fisherman_id)
     REFERENCES Fisherman (fisherman_id)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+    ON UPDATE NO CASCADE)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
