@@ -5,6 +5,8 @@
 
 {% block content %}
 
+    {{ attributes }}
+
 <div class="container">
     <form method="post">
         <table class="table">
@@ -17,6 +19,9 @@
                         {% if 'required' in attribute %}
                             required step="any"
                         {% endif %}
+                        {% if 'min' in attribute %}
+                           min="{{ attribute['min'] }}"
+                       {% endif %}
                         {% if 'maxlength' in attribute %}
                             maxlength="{{ attribute['maxlength'] }}"
                         {% endif %}

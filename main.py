@@ -168,11 +168,10 @@ def update_lure(_id):
     """
     updates a specified lure
     """
-    # TODO: This is broken
-    query = f"SELECT lure_id FROM Lure WHERE lure_id={_id}"
+    query = f"SELECT * FROM Lure WHERE lure_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
-    lure = cur.fetchall()
+    lure = cur.fetchall()[0]
 
     if request.method == 'POST':
         new_lure = request.form.get('name')
@@ -216,7 +215,7 @@ def add_lure():
     """add a lure to the db"""
     attributes = [
         {'name': 'Name', 'type': 'text', 'required': 'required'},
-        {'name': 'Weight', 'type': 'number', 'required': 'required'},
+        {'name': 'Weight', 'type': 'number', 'required': 'required', 'min': '0'},
         {'name': 'Color', 'type': 'text', 'required': 'required'},
         {'name': 'type', 'type': 'text', 'required': 'required'}
     ]
