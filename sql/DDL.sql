@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS Caught_fish (
   FOREIGN KEY (fisherman_id)
     REFERENCES Fisherman (fisherman_id)
     ON DELETE CASCADE
-    ON UPDATE NO CASCADE)
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
