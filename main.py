@@ -563,7 +563,7 @@ def retrieve_fish() -> tuple:
             "FROM Caught_fish " \
             "INNER JOIN Species ON Caught_fish.species_id=Species.species_id " \
             "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
-            "INNER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
+            "LEFT OUTER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
             "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
     # print(query)
     cur = mysql.connection.cursor()
