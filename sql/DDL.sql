@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Caught_fish (
   body_of_water_id INT NOT NULL,
   lure_id INT,
   fisherman_id INT,
-  specific_weight INT,
+  specific_weight DEC,
   PRIMARY KEY (caught_fish_id),
   FOREIGN KEY (species_id)
     REFERENCES Species (species_id)

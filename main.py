@@ -5,7 +5,6 @@ Jerrod Lepper
 """
 import os
 from flask import Flask, render_template, request, redirect
-from sample_data import FISHERMEN, LURES, BODIES_OF_WATER, SPECIES, CAUGHT_FISH
 from flask_mysqldb import MySQL
 from pprint import pprint
 
@@ -565,7 +564,7 @@ def retrieve_fish() -> tuple:
             "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
             "LEFT OUTER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
             "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
-    # print(query)
+    print(query)
     cur = mysql.connection.cursor()
     cur.execute(query)
     return cur.fetchall()
@@ -639,6 +638,10 @@ def update_fish(_id):
     This is a template and does not update anything
     """
     #TODO: Since both add and update use this big block of queries to grab all data for drop do
+
+    # TODO: there is a bug where null values aren't allowed (but should be). Flask is crashing because it's trying to
+    # access a value that doesn't exist. As a bandaid, I made all inputs required in the html file.
+
     query = "SELECT * FROM Species"
     cur = mysql.connection.cursor()
     cur.execute(query)

@@ -42,7 +42,7 @@
             <tr>
                 <td><label for="lure">Lure:</label></td>
                 <td>
-                    <select name="lure" id="lure">
+                    <select required name="lure" id="lure">
                         <option selected value=></option>
                         {% for lure in lures %}
                             {% if lure['lure_id'] == curr_fish['lure_id'] %}
@@ -57,7 +57,7 @@
             <tr>
                 <td><label for="fisherman">Caught By:</label></td>
                 <td>
-                    <select name="fisherman" id="fisherman">
+                    <select required name="fisherman" id="fisherman">
                         <option selected value=></option>
                         {% for fisherman in fishermen %}
                             {% if fisherman['fisherman_id'] == curr_fish['fisherman_id'] %}
@@ -71,7 +71,7 @@
             </tr>
             <tr>
                 <td><label for="weight">Weight:</label></td>
-                <td><input name="weight" id="weight" type="number" min="0" selected value="{{ curr_fish['specific_weight'] }}"></td>
+                <td><input required step="any" name="weight" id="weight" type="number" min="0" selected value="{{ curr_fish['specific_weight'] }}"></td>
             </tr>
         </table>
         <button type="submit" class="btn btn-primary btn-sm">Update</button>
