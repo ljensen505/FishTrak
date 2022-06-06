@@ -537,6 +537,8 @@ def caught_fish():
             for key in catch:
                 if param in str(catch[key]).lower():
                     caught.append(catch)
+                    # break to avoid duplicate inputs, and unnecessary iteration
+                    break
 
         title = 'Results'
         searching = True
