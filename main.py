@@ -563,8 +563,7 @@ def retrieve_fish() -> tuple:
             "INNER JOIN Species ON Caught_fish.species_id=Species.species_id " \
             "INNER JOIN Body_of_water ON Caught_fish.body_of_water_id=Body_of_water.body_id " \
             "LEFT OUTER JOIN Lure ON Caught_fish.lure_id=Lure.lure_id " \
-            "INNER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
-    print(query)
+            "LEFT OUTER JOIN Fisherman ON Caught_fish.fisherman_id=Fisherman.fisherman_id "
     cur = mysql.connection.cursor()
     cur.execute(query)
     return cur.fetchall()
@@ -597,35 +596,27 @@ def add_fish():
 
     if request.method == 'POST':
         species = request.form.get('species')
-        print(species)
         location = request.form.get('location')
-        print(location)
         lure = request.form.get('lure')
-        print(lure)
         angler = request.form.get('fisherman')
-        print(angler)
         weight = request.form.get('weight')
+
+        query = "SET foreign_key_checks = 0"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
 
         # TODO: Make functional with ' in lake names and others (St Mary's lake is troubesome), add branching for NULL vals in Lure
         # query to get insert new caught fish
-        query = f"INSERT INTO Caught_fish (species_id, body_of_water_id, lure_id, fisherman_id, specific_weight) \
+        query = f"INSERT INTO Caught_fish (species_id, body_of_water_id, fisherman_id, lure_id, specific_weight) \
         VALUES ((SELECT species_id FROM Species WHERE name = '{species}'), \
         (SELECT body_id FROM Body_of_water WHERE name = '{location}'), \
         (SELECT fisherman_id FROM Fisherman WHERE name = '{angler}'), \
         (SELECT lure_id FROM Lure WHERE name = '{lure}'), \
         {weight})"
-        print(query)
-        cur = mysql.connection.cursor()
-        print(cur.execute(query))
-        mysql.connection.commit()
-
-        query = f"SELECT * FROM Caught_fish"
         cur = mysql.connection.cursor()
         cur.execute(query)
-        curr_fish = cur.fetchall()
-        print(curr_fish)
+        mysql.connection.commit()
 
-        print(f"You added a fish to the db! (I think?)")
         return redirect('/caught_fish')
     return render_template('add_fish.html', title='Add Fish', species=species, bodies=bodies, lures=lures,
                            fishermen=fishermen, location='caught_fish')
@@ -635,9 +626,8 @@ def add_fish():
 def update_fish(_id):
     """
     updates a specified caught fish
-    This is a template and does not update anything
     """
-    #TODO: Since both add and update use this big block of queries to grab all data for drop do
+    #TODO: Since both add and update use this big block of queries to grab all data, might want to make this it's own function
 
     # TODO: there is a bug where null values aren't allowed (but should be). Flask is crashing because it's trying to
     # access a value that doesn't exist. As a bandaid, I made all inputs required in the html file.
@@ -646,41 +636,33 @@ def update_fish(_id):
     cur = mysql.connection.cursor()
     cur.execute(query)
     species = cur.fetchall()
-    print(species)
 
     query = "SELECT * FROM Lure"
     cur = mysql.connection.cursor()
     cur.execute(query)
     lures = cur.fetchall()
-    print(lures)
 
     query = "SELECT * FROM Body_of_water"
     cur = mysql.connection.cursor()
     cur.execute(query)
     bodies = cur.fetchall()
-    print(bodies)
 
     query = "SELECT * FROM Fisherman"
     cur = mysql.connection.cursor()
     cur.execute(query)
     fishermen = cur.fetchall()
-    print(fishermen)
 
     query = f"SELECT * FROM Caught_fish WHERE caught_fish_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
     curr_fish = cur.fetchall()
-    print(curr_fish)
 
     # TODO: the html file for this route needs some additional logic to handle default values for lure and caught_by
-    fish = _id
-    name = request.form.get('name')
 
     if request.method == 'POST':
         # Since caught_fish use keys, parse the table vars to get associated keys to update the fish
         # First, get the requested updates that the user would like
         feesh_species = request.form.get('species')
-        print(feesh_species)
         water_body = request.form.get('location')
         lure = request.form.get('lure')
         fisherman_form = request.form.get('fisherman')
