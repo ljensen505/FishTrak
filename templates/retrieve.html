@@ -25,14 +25,23 @@
         <button class="shadow-sm btn btn-outline-dark btn-sm">Go</button>
     </span>
 </form>
+    <div class="container" >
+        <div class="col text-center">
+    {% if searching %}
+        <a class="shadow btn btn-outline-secondary" href="/{{ location }}">All</a>
+    {% else %}
+        <a class="shadow btn btn-outline-secondary" href="/{{ location }}/add">New</a>
+    {% endif %}
+        </div>
+    </div>
 </div>
 
 {# helpful for debugging #}
 
 {#<p>Items: {{ items }}</p>#}
 {#<p>Attributes: {{ attributes }}</p>#}
-
-<table class="table table-hover">
+    <div style="height: 400px; overflow:auto">
+<table class="table table-hover" style="height: 400px">
 <tr>
     {% for attribute in attributes %}
         <th>{{ attribute.title() }}</th>
@@ -71,14 +80,7 @@
   </tr>
   {% endfor %}
 </table>
-<div class="container">
-    {% if searching %}
-        <a class="shadow btn btn-outline-secondary" href="/{{ location }}">All</a>
-    {% else %}
-        <a class="shadow btn btn-outline-secondary" href="/{{ location }}/add">New</a>
-    {% endif %}
-</div>
-
+    </div>
 </div>
 
 {% endblock %}

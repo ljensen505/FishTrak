@@ -216,7 +216,7 @@ def add_lure():
         {'name': 'Name', 'type': 'text', 'required': 'required'},
         {'name': 'Weight', 'type': 'number', 'required': 'required', 'min': '0'},
         {'name': 'Color', 'type': 'text', 'required': 'required'},
-        {'name': 'type', 'type': 'text', 'required': 'required'}
+        {'name': 'Type', 'type': 'text', 'required': 'required'}
     ]
     if request.method == 'POST':
         # This is ugly and I don't like it
