@@ -528,10 +528,14 @@ def caught_fish():
         # the user is searching
         param = request.form.get('search').lower()
         # can't use generic search function here because of JOINS
-        caught = [item for item in retrieve_fish() if param in item['Species'].lower()
+
+        # TODO: this list comprehension is broken because item['Lure'] can return None, which cannot be lowered
+        caught = [item for item in retrieve_fish()
+                  if param in item['Species'].lower()
                   or param in item['Lure'].lower()
                   or param in item['Water_Body'].lower()
                   or param in item['Angler'].lower()]
+
         title = 'Results'
         searching = True
 
