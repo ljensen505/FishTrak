@@ -225,7 +225,7 @@ def add_lure():
         color = request.form.get('color')
         type = request.form.get('type')
 
-        # query to add a lure
+        # query to add a 2
         query = f"INSERT INTO Lure (weight,name,color,type) VALUES (%s,%s,%s,%s)"
         cur = mysql.connection.cursor()
         cur.execute(query, (weight,name,color,type))
@@ -686,20 +686,15 @@ def update_fish(_id):
         print(body_id)
 
         counter = 0
-        iter_lure = lures[0]['name']
-        while iter_lure != lure:
-            counter += 1
-            iter_lure = lures[counter]['name']
-        lure_id = lures[counter]['lure_id']
-        print(lure_id)
-
-        counter = 0
-        iter_lure = lures[0]['name']
-        while iter_lure != lure:
-            counter += 1
-            iter_lure = lures[counter]['name']
-        lure_id = lures[counter]['lure_id']
-        print(lure_id)
+        if lure == '':
+            lure_id = None
+        else:
+            iter_lure = lures[0]['name']
+            while iter_lure != lure:
+                counter += 1
+                iter_lure = lures[counter]['name']
+            lure_id = lures[counter]['lure_id']
+            print(lure_id)
 
         counter = 0
         iter_fisherman = fishermen[0]['name']

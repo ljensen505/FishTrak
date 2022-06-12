@@ -42,7 +42,7 @@
             <tr>
                 <td><label for="lure">Lure:</label></td>
                 <td>
-                    <select required name="lure" id="lure">
+                    <select name="lure" id="lure">
                         <option selected value=></option>
                         {% for lure in lures %}
                             {% if lure['lure_id'] == curr_fish['lure_id'] %}
