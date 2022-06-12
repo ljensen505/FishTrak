@@ -42,3 +42,5 @@ Add constaints to add routes
 ~~-- fix navbar highlighting for update~~
 
 -- ~~install bootstrap 5 icons: https://icons.getbootstrap.com/#install~~
+
+-- searching is broken for Caught Fish. There is a note in the applicable function. Approx. line 532

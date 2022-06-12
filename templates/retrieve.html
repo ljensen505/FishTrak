@@ -25,15 +25,18 @@
         <button class="shadow-sm btn btn-outline-dark btn-sm">Go</button>
     </span>
 </form>
-    <div class="container" >
-        <div class="col text-center">
+
+<div class="container" >
+    <div class="col text-center">
+
     {% if searching %}
         <a class="shadow btn btn-outline-secondary" href="/{{ location }}">All</a>
     {% else %}
         <a class="shadow btn btn-outline-secondary" href="/{{ location }}/add">New</a>
     {% endif %}
-        </div>
+
     </div>
+</div>
 </div>
 
 {# helpful for debugging #}

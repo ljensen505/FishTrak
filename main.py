@@ -528,10 +528,18 @@ def caught_fish():
         # the user is searching
         param = request.form.get('search').lower()
         # can't use generic search function here because of JOINS
-        caught = [item for item in retrieve_fish() if param in item['Species'].lower()
-                  or param in item['Lure'].lower()
-                  or param in item['Water_Body'].lower()
-                  or param in item['Angler'].lower()]
+
+        # initialize caught to empty list
+        caught = []
+
+        # iterate through all caught fish, and filter using the given param
+        for catch in retrieve_fish():
+            for key in catch:
+                if param in str(catch[key]).lower():
+                    caught.append(catch)
+                    # break to avoid duplicate inputs, and unnecessary iteration
+                    break
+
         title = 'Results'
         searching = True
 
