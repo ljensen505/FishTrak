@@ -576,31 +576,43 @@ def retrieve_fish() -> tuple:
     cur.execute(query)
     return cur.fetchall()
 
+def get_all_table_vals():
+    """
+    Retireves all table vals for the caught fish routes, so you can select from all available options
+    """
 
-@app.route('/caught_fish/add', methods=['GET', 'POST'])
-def add_fish():
-    """adds a caught fish to the db"""
-
+    table_vals = []
     query = "SELECT * FROM Species"
     cur = mysql.connection.cursor()
     cur.execute(query)
     species = cur.fetchall()
+    table_vals.append(species)
 
     query = "SELECT * FROM Lure"
     cur = mysql.connection.cursor()
     cur.execute(query)
     lures = cur.fetchall()
+    table_vals.append(lures)
 
     query = "SELECT * FROM Body_of_water"
     cur = mysql.connection.cursor()
     cur.execute(query)
     bodies = cur.fetchall()
+    table_vals.append(bodies)
 
     query = "SELECT * FROM Fisherman"
     cur = mysql.connection.cursor()
     cur.execute(query)
     fishermen = cur.fetchall()
+    table_vals.append(fishermen)
 
+    return table_vals
+
+@app.route('/caught_fish/add', methods=['GET', 'POST'])
+def add_fish():
+    """adds a caught fish to the db"""
+
+    table_vals = get_all_table_vals()
 
     if request.method == 'POST':
         species = request.form.get('species')
@@ -626,46 +638,21 @@ def add_fish():
         mysql.connection.commit()
 
         return redirect('/caught_fish')
-    return render_template('add_fish.html', title='Add Fish', species=species, bodies=bodies, lures=lures,
-                           fishermen=fishermen, location='caught_fish')
-
+    return render_template('add_fish.html', title='Add Fish', species=table_vals[0], bodies=table_vals[2], lures=table_vals[1],
+                           fishermen=table_vals[3], location='caught_fish')
 
 @app.route('/caught_fish/update:<_id>', methods=['GET', 'POST'])
 def update_fish(_id):
     """
     updates a specified caught fish
     """
-    #TODO: Since both add and update use this big block of queries to grab all data, might want to make this it's own function
 
-    # TODO: there is a bug where null values aren't allowed (but should be). Flask is crashing because it's trying to
-    # access a value that doesn't exist. As a bandaid, I made all inputs required in the html file.
-
-    query = "SELECT * FROM Species"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    species = cur.fetchall()
-
-    query = "SELECT * FROM Lure"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    lures = cur.fetchall()
-
-    query = "SELECT * FROM Body_of_water"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    bodies = cur.fetchall()
-
-    query = "SELECT * FROM Fisherman"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    fishermen = cur.fetchall()
+    table_vals = get_all_table_vals()
 
     query = f"SELECT * FROM Caught_fish WHERE caught_fish_id={_id}"
     cur = mysql.connection.cursor()
     cur.execute(query)
     curr_fish = cur.fetchall()
-
-    # TODO: the html file for this route needs some additional logic to handle default values for lure and caught_by
 
     if request.method == 'POST':
         # Since caught_fish use keys, parse the table vars to get associated keys to update the fish
@@ -677,39 +664,45 @@ def update_fish(_id):
         weight = request.form.get('weight')
         #TODO: Make this faster and less ugly
         # Then, hideously iterate through each value in the evil tuple dict to pull out the id keys we need
+        query = f"SELECT species_id FROM Species WHERE name = '{feesh_species}'"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        Jimmy = cur.fetchall()
+        print(Jimmy)
+
         counter = 0
-        iter_species = species[0]['name']
+        iter_species = table_vals[0][0]['name']
         while iter_species != feesh_species:
             counter += 1
-            iter_species = species[counter]['name']
-        species_id = species[counter]['species_id']
+            iter_species = table_vals[0][counter]['name']
+        species_id = table_vals[0][counter]['species_id']
         print(species_id)
 
         counter = 0
-        iter_body = bodies[0]['name']
+        iter_body = table_vals[2][0]['name']
         while iter_body != water_body:
             counter += 1
-            iter_body = bodies[counter]['name']
-        body_id = bodies[counter]['body_id']
+            iter_body = table_vals[2][counter]['name']
+        body_id = table_vals[2][counter]['body_id']
         print(body_id)
 
         counter = 0
         if lure == '':
             lure_id = None
         else:
-            iter_lure = lures[0]['name']
+            iter_lure = table_vals[1][0]['name']
             while iter_lure != lure:
                 counter += 1
-                iter_lure = lures[counter]['name']
-            lure_id = lures[counter]['lure_id']
+                iter_lure = table_vals[1][counter]['name']
+            lure_id = table_vals[1][counter]['lure_id']
             print(lure_id)
 
         counter = 0
-        iter_fisherman = fishermen[0]['name']
+        iter_fisherman = table_vals[3][0]['name']
         while iter_fisherman != fisherman_form:
             counter += 1
-            iter_fisherman = fishermen[counter]['name']
-        fisherman_id = fishermen[counter]['fisherman_id']
+            iter_fisherman = table_vals[3][counter]['name']
+        fisherman_id = table_vals[3][counter]['fisherman_id']
         print(fisherman_id)
 
         query = f"UPDATE Caught_fish " \
@@ -723,8 +716,8 @@ def update_fish(_id):
 
         return redirect('/caught_fish')
 
-    return render_template('/update_fish.html', title='Update Fish', species=species, bodies=bodies,
-                           lures=lures, fishermen=fishermen, curr_fish=curr_fish[0], str=str, location='caught_fish')
+    return render_template('/update_fish.html', title='Update Fish', species=table_vals[0], bodies=table_vals[2],
+                           lures=table_vals[1], fishermen=table_vals[3], curr_fish=curr_fish[0], str=str, location='caught_fish')
 
 
 @app.route('/caught_fish/delete:<_id>', methods=['GET', 'POST'])
