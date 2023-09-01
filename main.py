@@ -6,19 +6,8 @@ Jerrod Lepper
 import os
 from flask import Flask, render_template, request, redirect
 from flask_mysqldb import MySQL
-from pprint import pprint
-
-"""
-CITATIONS:
-The general structure of this program is based on the CS340 provided sample Flask App.
-Our references to it have been ongoing through the term
-https://github.com/osu-cs340-ecampus/flask-starter-app
-"""
-
 
 app = Flask(__name__)
-# terminal command to auto-restart:
-# FLASK_APP=main.py FLASK_ENV=development flask run
 
 # database connection info
 app.config["MYSQL_HOST"] = os.getenv("HOST")

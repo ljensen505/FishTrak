@@ -3,8 +3,10 @@ from os import environ
 
 load_dotenv()
 
-workers = 4
-bind = f"127.0.0.1:{environ.get('PORT')}"
-worker_class = f"uvicorn.workers.UvicornWorker"
+port = environ.get("PORT")
 
-# gunicorn -c gunicorn_config.py app.main:app
+if port is None:
+    raise Exception("Could not read from .env file. Did you specify a port?")
+
+bind = f"0.0.0.0:{port}"  # Define the host and port
+workers = 4  # Number of worker processes
